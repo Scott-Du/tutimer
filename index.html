@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=20260507-3">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=20260507-3">
-  <link rel="manifest" href="timer-manifest.webmanifest?v=20260606-2">
+  <link rel="manifest" href="timer-manifest.webmanifest?v=20260606-4">
   <style>
     :root {
       --bg: #f5f5f7;
@@ -2182,54 +2182,53 @@
       color: #c7251f;
     }
 
-    .agenda-editor-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 90;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      background: rgba(20, 24, 31, 0.28);
-      backdrop-filter: blur(10px);
-    }
-
-    .agenda-editor-dialog {
-      width: min(420px, 100%);
+    .agenda-inline-editor {
       border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.98);
-      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.2);
-      padding: 20px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 14px 32px rgba(0, 122, 255, 0.12);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
     }
 
-    .agenda-editor-dialog h3 {
-      margin: 0 0 16px;
-      font-size: 18px;
+    .agenda-inline-editor h4 {
+      margin: 0;
+      font-size: 15px;
       line-height: 1.2;
     }
 
-    .agenda-editor-dialog label {
+    .agenda-inline-editor label {
       display: grid;
       gap: 6px;
-      margin-bottom: 12px;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 850;
     }
 
-    .agenda-editor-dialog input {
+    .agenda-inline-editor input {
       width: 100%;
       border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 10px;
-      padding: 11px 12px;
+      padding: 9px 10px;
       background: #fff;
       color: var(--ink);
       font: inherit;
       font-weight: 760;
     }
 
-    .agenda-editor-dialog p {
-      margin: 0 0 16px;
+    .agenda-editor-rule-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .agenda-editor-rule-grid label {
+      margin-bottom: 0;
+    }
+
+    .agenda-inline-editor p {
+      margin: 0;
       color: var(--muted);
       font-size: 12px;
       line-height: 1.5;
@@ -2272,6 +2271,10 @@
 
       .settings-view {
         padding: 14px;
+      }
+
+      .agenda-editor-rule-grid {
+        grid-template-columns: 1fr;
       }
 
       .settings-shell {
@@ -4134,25 +4137,6 @@
     <button type="button" role="menuitem" data-agenda-menu-action="delete" class="danger" data-i18n="deleteAgendaItem">删除环节</button>
   </div>
 
-  <div id="agendaEditor" class="agenda-editor-overlay" hidden>
-    <div class="agenda-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="agendaEditorTitle">
-      <h3 id="agendaEditorTitle" data-i18n="editAgendaItem">修改环节</h3>
-      <label>
-        <span data-i18n="agendaItemTitle">环节名称</span>
-        <input id="agendaEditTitle" type="text">
-      </label>
-      <label>
-        <span data-i18n="agendaItemDuration">时间（分钟或 mm:ss）</span>
-        <input id="agendaEditDuration" type="text" inputmode="decimal">
-      </label>
-      <p id="agendaEditHint" data-i18n="agendaEditHint">时间会同步为当前环节的红牌时间。</p>
-      <div class="agenda-editor-actions">
-        <button id="agendaEditCancel" class="btn secondary" type="button" data-i18n="cancel">取消</button>
-        <button id="agendaEditSave" class="btn primary" type="button" data-i18n="saveOnly">保存</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     const STORAGE_KEY = "tuTimer.v2";
     const OLD_STORAGE_KEY = "universalSpeechMeetingTimer.v1";
@@ -4500,8 +4484,11 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         editAgendaItem: "修改环节",
         deleteAgendaItem: "删除环节",
         agendaItemTitle: "环节名称",
-        agendaItemDuration: "时间（分钟或 mm:ss）",
-        agendaEditHint: "时间会同步为当前环节的红牌时间。",
+        agendaItemDuration: "计划时长（分钟或 mm:ss）",
+        agendaItemGreen: "绿牌时间",
+        agendaItemYellow: "黄牌时间",
+        agendaItemRed: "红牌时间",
+        agendaEditHint: "可以一并修改绿牌、黄牌、红牌时间；留空时按计划时长自动计算。",
         cancel: "取消",
         deleteActiveAgendaDenied: "当前正在计时的环节不能删除。",
         confirmDeleteAgendaItem: "删除“{title}”吗？相关时间记录也会一起删除。",
@@ -4678,8 +4665,11 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         editAgendaItem: "Edit segment",
         deleteAgendaItem: "Delete segment",
         agendaItemTitle: "Segment name",
-        agendaItemDuration: "Time (minutes or mm:ss)",
-        agendaEditHint: "The time is synced to this segment's red-card time.",
+        agendaItemDuration: "Planned time (minutes or mm:ss)",
+        agendaItemGreen: "Green time",
+        agendaItemYellow: "Yellow time",
+        agendaItemRed: "Red time",
+        agendaEditHint: "You can edit green/yellow/red card times together; blank fields use automatic timing.",
         cancel: "Cancel",
         deleteActiveAgendaDenied: "The segment currently being timed cannot be deleted.",
         confirmDeleteAgendaItem: "Delete \"{title}\"? Related timing records will also be deleted.",
@@ -4981,12 +4971,6 @@ Then produce:
       agendaPanel: document.getElementById("agendaPanel"),
       agendaList: document.getElementById("agendaList"),
       agendaContextMenu: document.getElementById("agendaContextMenu"),
-      agendaEditor: document.getElementById("agendaEditor"),
-      agendaEditorTitle: document.getElementById("agendaEditorTitle"),
-      agendaEditTitle: document.getElementById("agendaEditTitle"),
-      agendaEditDuration: document.getElementById("agendaEditDuration"),
-      agendaEditCancel: document.getElementById("agendaEditCancel"),
-      agendaEditSave: document.getElementById("agendaEditSave"),
       localeButtons: [...document.querySelectorAll("[data-locale-option]")],
       localeTriggers: [...document.querySelectorAll("[data-locale-trigger]")],
       languageSwitches: [...document.querySelectorAll("[data-language-switch]")]
@@ -6647,6 +6631,68 @@ Then produce:
       `;
     }
 
+    function renderInlineAgendaEditor() {
+      if (!agendaEditState) return "";
+      const heading = agendaEditState.mode === "edit" ? t("editAgendaItem") : t("addAgendaItem");
+      return `
+        <div class="agenda-inline-editor" data-agenda-inline-editor="true">
+          <h4>${escapeHtml(heading)}</h4>
+          <label>
+            <span>${escapeHtml(t("agendaItemTitle"))}</span>
+            <input data-agenda-edit="title" type="text" value="${escapeAttr(agendaEditState.titleValue || "")}">
+          </label>
+          <label>
+            <span>${escapeHtml(t("agendaItemDuration"))}</span>
+            <input data-agenda-edit="duration" type="text" inputmode="decimal" value="${escapeAttr(agendaEditState.durationValue || "")}">
+          </label>
+          <div class="agenda-editor-rule-grid">
+            <label>
+              <span>${escapeHtml(t("agendaItemGreen"))}</span>
+              <input data-agenda-edit="green" type="text" inputmode="decimal" value="${escapeAttr(agendaEditState.greenValue || "")}">
+            </label>
+            <label>
+              <span>${escapeHtml(t("agendaItemYellow"))}</span>
+              <input data-agenda-edit="yellow" type="text" inputmode="decimal" value="${escapeAttr(agendaEditState.yellowValue || "")}">
+            </label>
+            <label>
+              <span>${escapeHtml(t("agendaItemRed"))}</span>
+              <input data-agenda-edit="red" type="text" inputmode="decimal" value="${escapeAttr(agendaEditState.redValue || "")}">
+            </label>
+          </div>
+          <p>${escapeHtml(t("agendaEditHint"))}</p>
+          <div class="agenda-editor-actions">
+            <button class="btn secondary" type="button" data-agenda-editor-action="cancel">${escapeHtml(t("cancel"))}</button>
+            <button class="btn primary" type="button" data-agenda-editor-action="save">${escapeHtml(t("saveOnly"))}</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAgendaListEntries(entries) {
+      if (!agendaEditState) return entries.map(renderTimelineItem).join("");
+      const html = [];
+      let insertedEditor = false;
+      entries.forEach((entry) => {
+        const shouldInsertBefore = agendaEditState.mode === "insert" &&
+          entry.type === "agenda" &&
+          entry.index >= agendaEditState.insertIndex;
+        if (shouldInsertBefore && !insertedEditor) {
+          html.push(renderInlineAgendaEditor());
+          insertedEditor = true;
+        }
+        html.push(renderTimelineItem(entry));
+        const shouldInsertAfter = agendaEditState.mode === "edit" &&
+          entry.type === "agenda" &&
+          entry.itemId === agendaEditState.itemId;
+        if (shouldInsertAfter && !insertedEditor) {
+          html.push(renderInlineAgendaEditor());
+          insertedEditor = true;
+        }
+      });
+      if (!insertedEditor) html.push(renderInlineAgendaEditor());
+      return html.join("");
+    }
+
     function scrollCurrentAgendaIntoView() {
       if (state.view !== "timer") return;
       requestAnimationFrame(() => {
@@ -6679,7 +6725,7 @@ Then produce:
 
     function renderLists() {
       state.agenda = ensureAgendaItems(state.agenda);
-      if (!state.agenda.length && !state.records.length && !state.active) {
+      if (!state.agenda.length && !state.records.length && !state.active && !agendaEditState) {
         nodes.agendaList.innerHTML = `<div class="empty-state">${t("noAgenda")}</div>`;
         state.lastAgendaFocusKey = "";
         return;
@@ -6776,7 +6822,7 @@ Then produce:
       });
 
       const currentFocusKey = currentAgendaFocusKey();
-      nodes.agendaList.innerHTML = entries.map(renderTimelineItem).join("");
+      nodes.agendaList.innerHTML = renderAgendaListEntries(entries);
       if (currentFocusKey && currentFocusKey !== state.lastAgendaFocusKey) {
         scrollCurrentAgendaIntoView();
       }
@@ -7189,6 +7235,61 @@ Then produce:
       nodes.agendaContextMenu.hidden = true;
     }
 
+    function agendaEditorNode() {
+      return nodes.agendaList.querySelector(".agenda-inline-editor");
+    }
+
+    function agendaEditorInput(name) {
+      return agendaEditorNode()?.querySelector(`[data-agenda-edit="${name}"]`);
+    }
+
+    function agendaEditorRuleValues() {
+      return {
+        greenAtSec: parseDuration(agendaEditorInput("green")?.value, "minutes"),
+        yellowAtSec: parseDuration(agendaEditorInput("yellow")?.value, "minutes"),
+        redAtSec: parseDuration(agendaEditorInput("red")?.value, "minutes")
+      };
+    }
+
+    function setAgendaEditorRuleInputs(rule) {
+      if (agendaEditState) {
+        agendaEditState.greenValue = formatInputTime(rule.greenAtSec, "minutes");
+        agendaEditState.yellowValue = formatInputTime(rule.yellowAtSec, "minutes");
+        agendaEditState.redValue = formatInputTime(rule.redAtSec, "minutes");
+      }
+      const green = agendaEditorInput("green");
+      const yellow = agendaEditorInput("yellow");
+      const red = agendaEditorInput("red");
+      if (green) green.value = agendaEditState?.greenValue || formatInputTime(rule.greenAtSec, "minutes");
+      if (yellow) yellow.value = agendaEditState?.yellowValue || formatInputTime(rule.yellowAtSec, "minutes");
+      if (red) red.value = agendaEditState?.redValue || formatInputTime(rule.redAtSec, "minutes");
+    }
+
+    function ruleFieldsMatch(values) {
+      if (!values) return false;
+      const current = agendaEditorRuleValues();
+      return current.greenAtSec === values.greenAtSec &&
+        current.yellowAtSec === values.yellowAtSec &&
+        current.redAtSec === values.redAtSec;
+    }
+
+    function updateAgendaEditorAutoRules() {
+      if (!agendaEditState?.autoRuleFields) return;
+      if (!ruleFieldsMatch(agendaEditState.autoRuleFields)) {
+        agendaEditState.autoRuleFields = null;
+        return;
+      }
+      const durationSec = parseDuration(agendaEditorInput("duration")?.value, "minutes");
+      if (!durationSec || durationSec <= 0) return;
+      const nextRule = autoRule(durationSec);
+      setAgendaEditorRuleInputs(nextRule);
+      agendaEditState.autoRuleFields = {
+        greenAtSec: nextRule.greenAtSec,
+        yellowAtSec: nextRule.yellowAtSec,
+        redAtSec: nextRule.redAtSec
+      };
+    }
+
     function openAgendaContextMenu(event, row) {
       const itemId = row.dataset.agendaId;
       if (!itemId) return;
@@ -7206,32 +7307,59 @@ Then produce:
       const found = itemId ? agendaItemById(itemId) : null;
       const insertIndex = options.insertIndex ?? defaultAgendaInsertIndex();
       const item = found?.item;
+      const durationSec = item?.durationSec || item?.redAtSec || 300;
+      const rule = item ? {
+        greenAtSec: item.greenAtSec,
+        yellowAtSec: item.yellowAtSec,
+        redAtSec: item.redAtSec
+      } : autoRule(durationSec);
+      const automaticRule = autoRule(durationSec);
+      const shouldAutoUpdateRules = !item ||
+        (item.greenAtSec === automaticRule.greenAtSec &&
+          item.yellowAtSec === automaticRule.yellowAtSec &&
+          item.redAtSec === automaticRule.redAtSec);
       agendaEditState = {
         itemId: item?.id || "",
         insertIndex,
-        mode: item ? "edit" : "insert"
+        mode: item ? "edit" : "insert",
+        titleValue: item?.title || t("segmentFallback", { number: state.agenda.length + 1 }),
+        durationValue: formatInputTime(durationSec, "minutes"),
+        greenValue: formatInputTime(rule.greenAtSec, "minutes"),
+        yellowValue: formatInputTime(rule.yellowAtSec, "minutes"),
+        redValue: formatInputTime(rule.redAtSec, "minutes"),
+        autoRuleFields: shouldAutoUpdateRules ? {
+          greenAtSec: rule.greenAtSec,
+          yellowAtSec: rule.yellowAtSec,
+          redAtSec: rule.redAtSec
+        } : null
       };
-      nodes.agendaEditorTitle.textContent = item ? t("editAgendaItem") : t("addAgendaItem");
-      nodes.agendaEditTitle.value = item?.title || t("segmentFallback", { number: state.agenda.length + 1 });
-      nodes.agendaEditDuration.value = formatInputTime(item?.redAtSec || 300, "minutes");
-      nodes.agendaEditor.hidden = false;
-      requestAnimationFrame(() => nodes.agendaEditTitle.focus({ preventScroll: true }));
+      renderLists();
+      requestAnimationFrame(() => agendaEditorInput("title")?.focus({ preventScroll: true }));
     }
 
-    function closeAgendaEditor() {
+    function closeAgendaEditor(options = {}) {
       agendaEditState = null;
-      nodes.agendaEditor.hidden = true;
+      if (options.render !== false) renderLists();
     }
 
     function saveAgendaEditor() {
       if (!agendaEditState) return;
-      const title = normalizeText(nodes.agendaEditTitle.value) || t("untitledSegment");
-      const durationSec = parseDuration(nodes.agendaEditDuration.value, "minutes");
+      const title = normalizeText(agendaEditorInput("title")?.value) || t("untitledSegment");
+      const durationSec = parseDuration(agendaEditorInput("duration")?.value, "minutes");
       if (!durationSec || durationSec <= 0) {
-        nodes.agendaEditDuration.focus();
+        agendaEditorInput("duration")?.focus();
         return;
       }
-      const defaults = autoRule(durationSec);
+      const enteredRule = agendaEditorRuleValues();
+      const redAtSec = enteredRule.redAtSec || durationSec;
+      const defaults = autoRule(redAtSec);
+      const greenAtSec = enteredRule.greenAtSec ?? defaults.greenAtSec;
+      const yellowAtSec = enteredRule.yellowAtSec ?? defaults.yellowAtSec;
+      const dingAfterSec = agendaEditState.mode === "edit"
+        ? agendaItemById(agendaEditState.itemId)?.item?.dingAfterSec ?? 30
+        : 30;
+      const validMinSec = Math.min(greenAtSec, redAtSec);
+      const validMaxSec = redAtSec + dingAfterSec;
       if (agendaEditState.mode === "edit") {
         const found = agendaItemById(agendaEditState.itemId);
         if (!found) {
@@ -7242,11 +7370,12 @@ Then produce:
           ...found.item,
           title,
           durationSec,
-          greenAtSec: defaults.greenAtSec,
-          yellowAtSec: defaults.yellowAtSec,
-          redAtSec: defaults.redAtSec,
-          validMinSec: defaults.validMinSec,
-          validMaxSec: defaults.validMaxSec
+          greenAtSec,
+          yellowAtSec,
+          redAtSec,
+          dingAfterSec,
+          validMinSec,
+          validMaxSec
         }, title);
         state.agenda[found.index] = nextItem;
         updateRecordsForAgendaItem(nextItem, found.index);
@@ -7256,17 +7385,17 @@ Then produce:
           title,
           description: "",
           durationSec,
-          greenAtSec: defaults.greenAtSec,
-          yellowAtSec: defaults.yellowAtSec,
-          redAtSec: defaults.redAtSec,
-          dingAfterSec: 30,
-          validMinSec: defaults.validMinSec,
-          validMaxSec: defaults.validMaxSec,
+          greenAtSec,
+          yellowAtSec,
+          redAtSec,
+          dingAfterSec,
+          validMinSec,
+          validMaxSec,
           childTemplates: []
         }, title);
         state.agenda.splice(insertIndex, 0, nextItem);
       }
-      closeAgendaEditor();
+      closeAgendaEditor({ render: false });
       commitAgendaMutation();
     }
 
@@ -7711,17 +7840,6 @@ Then produce:
       if (action === "edit") openAgendaEditor(itemId);
       if (action === "delete") deleteAgendaItem(itemId);
     });
-    nodes.agendaEditCancel.addEventListener("click", closeAgendaEditor);
-    nodes.agendaEditSave.addEventListener("click", saveAgendaEditor);
-    nodes.agendaEditor.addEventListener("click", (event) => {
-      if (event.target === nodes.agendaEditor) closeAgendaEditor();
-    });
-    nodes.agendaEditDuration.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") saveAgendaEditor();
-    });
-    nodes.agendaEditTitle.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") saveAgendaEditor();
-    });
     document.addEventListener("click", (event) => {
       closeLanguageMenus();
       if (!event.target.closest(".agenda-context-menu")) closeAgendaContextMenu();
@@ -7730,7 +7848,7 @@ Then produce:
       if (event.key === "Escape") {
         closeLanguageMenus();
         closeAgendaContextMenu();
-        if (!nodes.agendaEditor.hidden) closeAgendaEditor();
+        if (agendaEditState) closeAgendaEditor();
       }
     });
     nodes.agendaList.addEventListener("pointerdown", handleAgendaPointerDown);
@@ -7740,7 +7858,45 @@ Then produce:
       event.preventDefault();
       openAgendaContextMenu(event, row);
     });
+    nodes.agendaList.addEventListener("input", (event) => {
+      const input = event.target.closest("[data-agenda-edit]");
+      if (!input || !agendaEditState) return;
+      const field = input.dataset.agendaEdit;
+      const stateKey = {
+        title: "titleValue",
+        duration: "durationValue",
+        green: "greenValue",
+        yellow: "yellowValue",
+        red: "redValue"
+      }[field];
+      if (stateKey) agendaEditState[stateKey] = input.value;
+      if (field === "duration") {
+        updateAgendaEditorAutoRules();
+      } else if (["green", "yellow", "red"].includes(field) && !ruleFieldsMatch(agendaEditState.autoRuleFields)) {
+        agendaEditState.autoRuleFields = null;
+      }
+    });
+    nodes.agendaList.addEventListener("keydown", (event) => {
+      if (!event.target.closest("[data-agenda-edit]")) return;
+      if (event.key === "Enter") {
+        event.preventDefault();
+        saveAgendaEditor();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        closeAgendaEditor();
+      }
+    });
     nodes.agendaList.addEventListener("click", (event) => {
+      const editorAction = event.target.closest("[data-agenda-editor-action]")?.dataset.agendaEditorAction;
+      if (editorAction === "save") {
+        saveAgendaEditor();
+        return;
+      }
+      if (editorAction === "cancel") {
+        closeAgendaEditor();
+        return;
+      }
+      if (event.target.closest(".agenda-inline-editor")) return;
       if (suppressAgendaClick) {
         event.preventDefault();
         suppressAgendaClick = false;
