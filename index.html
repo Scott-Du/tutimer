@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=20260507-3">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=20260507-3">
-  <link rel="manifest" href="timer-manifest.webmanifest?v=20260507-3">
+  <link rel="manifest" href="timer-manifest.webmanifest?v=20260606-2">
   <style>
     :root {
       --bg: #f5f5f7;
@@ -78,6 +78,10 @@
     .view {
       display: none;
       min-height: 100vh;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     .view.active {
@@ -154,6 +158,23 @@
 
     .settings-language-switch.open {
       z-index: 100;
+    }
+
+    .settings-top-actions {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 70;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-return-btn {
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: 12px;
     }
 
     .language-trigger {
@@ -269,6 +290,69 @@
       margin-bottom: 10px;
     }
 
+    .settings-flow {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .import-steps {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .import-step-pill {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 0 12px;
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .import-step-pill.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 10px 24px rgba(0, 122, 255, 0.2);
+    }
+
+    .import-step-pill-number {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.08);
+      font-size: 12px;
+    }
+
+    .import-step-pill.active .import-step-pill-number {
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .import-step-pill[disabled] {
+      cursor: default;
+    }
+
+    .import-step-pill:not(.active)[disabled] {
+      opacity: 0.62;
+    }
+
     .mode-option {
       min-height: 40px;
       border: 1px solid var(--line);
@@ -297,6 +381,138 @@
       align-items: stretch;
       flex: 1;
       min-height: 0;
+    }
+
+    .import-step {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .import-step-intro {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .prompt-guide-panel,
+    .prompt-example-panel {
+      padding: 18px;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .guide-title {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .guide-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .guide-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .guide-list li {
+      min-height: 48px;
+    }
+
+    .guide-step-action {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 0 16px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--ink);
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 850;
+      line-height: 1.35;
+      text-decoration: none;
+      white-space: normal;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .guide-step-action:hover,
+    .guide-step-action:focus-visible {
+      border-color: rgba(0, 122, 255, 0.36);
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(0, 122, 255, 0.12);
+    }
+
+    .guide-step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .prompt-note {
+      margin: 0;
+      color: #8e8e93;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .prompt-mode-note {
+      margin: -4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .example-shot-wrap {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #f6f8fa;
+    }
+
+    .example-shot {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .settings-grid[data-import-step="2"] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .settings-grid[data-import-step="2"] .preview-panel,
+    .settings-grid[data-import-step="2"] .step3-only,
+    .settings-grid[data-import-step="3"] .step2-only {
+      display: none !important;
     }
 
     .creator-note {
@@ -340,7 +556,7 @@
       height: 100%;
       min-height: 0;
       display: grid;
-      grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+      grid-template-rows: auto minmax(0, 1fr) auto;
     }
 
     .preview-panel {
@@ -440,6 +656,12 @@
     .copy-prompt-btn {
       min-height: 40px;
       padding: 0 14px;
+    }
+
+    .btn.small {
+      min-height: 32px;
+      padding: 0 12px;
+      font-size: 12px;
     }
 
     .btn.copy-feedback-success,
@@ -1725,6 +1947,8 @@
       padding: 10px 12px;
       min-width: 0;
       cursor: pointer;
+      position: relative;
+      touch-action: pan-y;
     }
 
     .agenda-item.current {
@@ -1735,6 +1959,37 @@
 
     .agenda-item.done {
       opacity: 0.86;
+    }
+
+    .agenda-item.drag-ready {
+      cursor: grab;
+      box-shadow: inset 0 0 0 1px rgba(0, 122, 255, 0.22);
+    }
+
+    .agenda-item.dragging {
+      opacity: 0.48;
+      cursor: grabbing;
+    }
+
+    .agenda-item.drop-before::before,
+    .agenda-item.drop-after::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.14);
+      pointer-events: none;
+    }
+
+    .agenda-item.drop-before::before {
+      top: -3px;
+    }
+
+    .agenda-item.drop-after::after {
+      bottom: -3px;
     }
 
     .agenda-row {
@@ -1893,6 +2148,99 @@
       background: rgba(142, 142, 147, 0.08);
     }
 
+    .agenda-context-menu {
+      position: fixed;
+      z-index: 80;
+      min-width: 156px;
+      padding: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.16);
+      backdrop-filter: blur(14px);
+    }
+
+    .agenda-context-menu button {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      padding: 9px 10px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .agenda-context-menu button:hover {
+      background: rgba(0, 122, 255, 0.08);
+    }
+
+    .agenda-context-menu button.danger {
+      color: #c7251f;
+    }
+
+    .agenda-editor-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(20, 24, 31, 0.28);
+      backdrop-filter: blur(10px);
+    }
+
+    .agenda-editor-dialog {
+      width: min(420px, 100%);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+    }
+
+    .agenda-editor-dialog h3 {
+      margin: 0 0 16px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .agenda-editor-dialog label {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .agenda-editor-dialog input {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 10px;
+      padding: 11px 12px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 760;
+    }
+
+    .agenda-editor-dialog p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .agenda-editor-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
     .empty-state {
       padding: 18px;
       border: 1px dashed var(--line);
@@ -1948,6 +2296,38 @@
       .settings-language-switch {
         position: static;
         transform: none;
+      }
+
+      .settings-top-actions {
+        position: static;
+        transform: none;
+      }
+
+      .settings-flow {
+        flex: 0 0 auto;
+      }
+
+      .import-steps,
+      .import-step-intro {
+        grid-template-columns: 1fr;
+      }
+
+      .import-step-pill {
+        min-height: 38px;
+      }
+
+      .prompt-guide-panel,
+      .prompt-example-panel {
+        display: block;
+        height: auto;
+        min-height: 0;
+        padding: 12px;
+        border-radius: 18px;
+      }
+
+      .example-shot-wrap {
+        height: auto;
+        min-height: 240px;
       }
 
       .settings-grid {
@@ -2778,6 +3158,85 @@
         transform: translateY(-50%);
       }
 
+      .settings-top-actions {
+        left: 10px;
+      }
+
+      .settings-return-btn {
+        min-height: 30px;
+        padding: 0 10px;
+        font-size: 11px;
+      }
+
+      .settings-flow {
+        gap: 8px;
+      }
+
+      .import-steps {
+        gap: 5px;
+      }
+
+      .import-step-pill {
+        min-height: 30px;
+        border-radius: 10px;
+        padding: 0 7px;
+        gap: 5px;
+        font-size: 11px;
+      }
+
+      .import-step-pill-number {
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+      }
+
+      .import-step-intro {
+        grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.06fr);
+        gap: 8px;
+      }
+
+      .prompt-guide-panel,
+      .prompt-example-panel {
+        padding: 10px;
+        border-radius: 14px;
+        gap: 8px;
+      }
+
+      .prompt-note {
+        font-size: 11px;
+      }
+
+      .guide-title {
+        font-size: clamp(18px, 2.8vw, 24px);
+      }
+
+      .guide-list {
+        gap: 5px;
+      }
+
+      .guide-list li {
+        min-height: 28px;
+      }
+
+      .guide-step-action {
+        min-height: 34px;
+        border-radius: 10px;
+        padding: 0 10px;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      .guide-step-number {
+        width: 22px;
+        height: 22px;
+        font-size: 11px;
+      }
+
+      .example-shot-wrap {
+        border-radius: 12px;
+      }
+
       .settings-grid {
         grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
         gap: 8px;
@@ -3352,6 +3811,9 @@
     <section id="settingsView" class="view settings-view active" aria-label="议程设置" data-i18n-aria="settingsAria">
       <div class="settings-shell">
         <div class="settings-logo">
+          <div class="settings-top-actions">
+            <button id="returnToTimer" class="btn settings-return-btn" type="button" data-i18n="returnToTimer">返回计时</button>
+          </div>
           <img class="logo-img" src="assets/logo.png" alt="兔会计时器 logo" data-i18n-alt="logoAlt">
           <div class="language-switch settings-language-switch" role="group" aria-label="语言" data-i18n-aria="language" data-language-switch>
             <button class="language-trigger" type="button" aria-haspopup="menu" aria-expanded="false" data-locale-trigger>中文</button>
@@ -3362,84 +3824,124 @@
           </div>
         </div>
 
-        <div class="settings-grid">
-          <section class="panel paste-panel">
-            <div class="panel-title">
-              <h2 data-i18n="agendaInfo">议程信息</h2>
-            </div>
-            <label class="field-block">
-              <span class="field-label" data-i18n="meetingNameLabel">本次会议名</span>
-              <input id="meetingNameInput" class="settings-input" type="text" placeholder="例如：周三例会" data-i18n-placeholder="meetingNamePlaceholder">
-            </label>
-            <div class="mode-row">
-              <div class="mode-switch" aria-label="粘贴模式" data-i18n-aria="pasteMode">
-                <label class="mode-option" title="使用默认红黄绿牌时间" data-i18n-title="simpleAgendaHint">
+        <div class="settings-flow">
+          <div class="import-steps" aria-label="导入步骤" data-i18n-aria="importStepsAria">
+            <button class="import-step-pill active" data-step-pill="1" type="button"><span class="import-step-pill-number">1</span><span data-i18n="stepPrompt">复制提示词</span></button>
+            <button class="import-step-pill" data-step-pill="2" type="button"><span class="import-step-pill-number">2</span><span data-i18n="stepPaste">粘贴结果</span></button>
+            <button class="import-step-pill" data-step-pill="3" type="button"><span class="import-step-pill-number">3</span><span data-i18n="stepPreview">检查表格</span></button>
+          </div>
+
+          <section id="promptStep" class="import-step import-step-intro">
+            <section class="panel prompt-guide-panel">
+              <h1 class="guide-title" data-i18n="promptStepTitle">提示词和议程一起发给大模型</h1>
+              <label class="field-block">
+                <span class="field-label" data-i18n="meetingNameLabel">本次会议名</span>
+                <input id="meetingNameInput" class="settings-input" type="text" placeholder="例如：周三例会" data-i18n-placeholder="meetingNamePlaceholder">
+              </label>
+              <div class="mode-switch" aria-label="提示词类型" data-i18n-aria="pasteMode">
+                <label class="mode-option" title="不自定义红牌、黄牌、绿牌时间" data-i18n-title="simpleAgendaHint">
                   <input type="radio" name="pasteMode" value="simple" checked>
-                  <span data-i18n="simpleAgenda">简版议程</span>
+                  <span data-i18n="simpleAgenda">简版提示词</span>
                 </label>
-                <label class="mode-option" title="设定红黄绿牌时间" data-i18n-title="fullAgendaHint">
+                <label class="mode-option" title="需要自定义红牌、黄牌、绿牌时间" data-i18n-title="fullAgendaHint">
                   <input type="radio" name="pasteMode" value="full">
-                  <span data-i18n="fullAgenda">完整议程</span>
+                  <span data-i18n="fullAgenda">完整提示词</span>
                 </label>
               </div>
-              <button id="copyPrompt" class="btn copy-prompt-btn" type="button">
-                <span class="btn-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </span>
-                <span class="copy-prompt-label" data-i18n="copyPrompt">复制提示词</span>
-              </button>
-            </div>
-            <div class="textarea-wrap">
-              <textarea id="agendaInput" spellcheck="false" aria-label="粘贴议程表" placeholder="粘贴议程" data-i18n-aria="pasteAgendaAria" data-i18n-placeholder="pasteAgendaPlaceholder"></textarea>
-            </div>
-            <div class="button-row">
-              <button id="parseAgenda" class="btn primary" type="button" data-i18n="parseAgenda">解析议程</button>
-              <button id="loadExample" class="btn" type="button" data-i18n="loadExample">填入示例</button>
-              <button id="clearDraft" class="btn danger" type="button" data-i18n="clear">清空</button>
-            </div>
-            <div id="parseStatus" class="status-line" role="status"></div>
+              <p class="prompt-mode-note" data-i18n="promptModeNote">区别：是否需要自定义红牌、黄牌、绿牌的时间。</p>
+              <ul class="guide-list">
+                <li>
+                  <button id="copyPrompt" class="guide-step-action" type="button">
+                    <span class="guide-step-number" aria-hidden="true">1</span>
+                    <span class="copy-prompt-label" data-i18n="promptStepItem1">复制提示词</span>
+                  </button>
+                </li>
+                <li>
+                  <a id="openDeepSeek" class="guide-step-action deepseek-link" href="https://chat.deepseek.com/" target="_blank" rel="noopener noreferrer">
+                    <span class="guide-step-number" aria-hidden="true">2</span>
+                    <span data-i18n="promptStepItem2">把提示词和议程图片、文字或 Excel 表一起发给 AI</span>
+                  </a>
+                </li>
+                <li>
+                  <button id="nextToPasteStep" class="guide-step-action" type="button">
+                    <span class="guide-step-number" aria-hidden="true">3</span>
+                    <span data-i18n="promptStepItem3">模型输出表格后，进入下一步粘贴结果</span>
+                  </button>
+                </li>
+              </ul>
+              <div class="button-row">
+                <button id="nextToPaste" class="btn primary" type="button" data-i18n="nextStep">下一步</button>
+              </div>
+              <div id="promptStatus" class="status-line" role="status"></div>
+            </section>
+
+            <section class="panel prompt-example-panel">
+              <div class="example-shot-wrap">
+                <img class="example-shot" src="assets/deepseek-agenda-import-example.png" alt="DeepSeek 导入议程示例截图" data-i18n-alt="exampleScreenshotAlt">
+              </div>
+            </section>
           </section>
 
-          <section class="panel preview-panel">
-            <div class="panel-title">
-              <h2 data-i18n="agendaPreview">议程预览</h2>
-              <button id="addRow" class="btn icon" type="button" aria-label="新增行" data-i18n-aria="addRow">+</button>
-            </div>
-            <div id="agendaTableWrap" class="table-wrap">
-              <table id="agendaPreviewTable">
-                <colgroup id="agendaPreviewCols">
-                  <col>
-                  <col>
-                  <col>
-                  <col>
-                  <col>
-                  <col>
-                  <col>
-                  <col>
-                  <col>
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th><span class="column-head" data-i18n="colTitle">环节名</span><span class="column-resizer" data-column-index="0" role="separator" aria-label="调整环节名列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th><span class="column-head" data-i18n="colDescription">描述</span><span class="column-resizer" data-column-index="1" role="separator" aria-label="调整描述列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th><span class="column-head" data-i18n="colDuration">时长分钟</span><span class="column-resizer" data-column-index="2" role="separator" aria-label="调整时长分钟列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th><span class="column-head" data-i18n="colGreen">绿牌</span><span class="column-resizer" data-column-index="3" role="separator" aria-label="调整绿牌列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th><span class="column-head" data-i18n="colYellow">黄牌</span><span class="column-resizer" data-column-index="4" role="separator" aria-label="调整黄牌列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th><span class="column-head" data-i18n="colRed">红牌</span><span class="column-resizer" data-column-index="5" role="separator" aria-label="调整红牌列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th><span class="column-head" data-i18n="colBell">铃声</span><span class="column-resizer" data-column-index="6" role="separator" aria-label="调整铃声列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th><span class="column-head" data-i18n="colChildren">子环节模板</span><span class="column-resizer" data-column-index="7" role="separator" aria-label="调整子环节模板列宽" tabindex="0" title="拖动调整列宽"></span></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="agendaTableBody"></tbody>
-              </table>
-            </div>
-            <div class="button-row">
-              <button id="saveAgenda" class="btn primary" type="button" data-i18n="saveAgenda">保存并开始计时</button>
-              <button id="saveOnly" class="btn" type="button" data-i18n="saveOnly">保存</button>
-            </div>
-            <div id="saveStatus" class="status-line" role="status"></div>
-          </section>
+          <div id="settingsGrid" class="settings-grid import-step" data-import-step="2" hidden>
+            <section class="panel paste-panel">
+              <div class="panel-title">
+                <h2 data-i18n="pasteResultTitle">粘贴AI输出的结果</h2>
+                <button id="loadExample" class="btn small" type="button" data-i18n="loadExample">填入示例</button>
+              </div>
+              <div class="textarea-wrap">
+                <textarea id="agendaInput" spellcheck="false" aria-label="粘贴议程表" placeholder="粘贴议程" data-i18n-aria="pasteAgendaAria" data-i18n-placeholder="pasteAgendaPlaceholder"></textarea>
+              </div>
+              <div class="button-row">
+                <button id="backToPrompt" class="btn step2-only" type="button" data-i18n="backStep">上一步</button>
+                <button id="nextToPreview" class="btn primary step2-only" type="button" data-i18n="nextStep">下一步</button>
+                <button id="backToPaste" class="btn step3-only" type="button" data-i18n="backStep">上一步</button>
+                <button id="parseAgenda" class="btn primary step3-only" type="button" data-i18n="parseAgenda">解析议程</button>
+                <button id="clearDraft" class="btn danger" type="button" data-i18n="clear">清空</button>
+              </div>
+              <div id="parseStatus" class="status-line" role="status"></div>
+            </section>
+
+            <section class="panel preview-panel">
+              <div class="panel-title">
+                <h2 data-i18n="agendaPreview">议程预览</h2>
+                <button id="addRow" class="btn icon" type="button" aria-label="新增行" data-i18n-aria="addRow">+</button>
+              </div>
+              <div id="agendaTableWrap" class="table-wrap">
+                <table id="agendaPreviewTable">
+                  <colgroup id="agendaPreviewCols">
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th><span class="column-head" data-i18n="colTitle">环节名</span><span class="column-resizer" data-column-index="0" role="separator" aria-label="调整环节名列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th><span class="column-head" data-i18n="colDescription">描述</span><span class="column-resizer" data-column-index="1" role="separator" aria-label="调整描述列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th><span class="column-head" data-i18n="colDuration">时长分钟</span><span class="column-resizer" data-column-index="2" role="separator" aria-label="调整时长分钟列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th><span class="column-head" data-i18n="colGreen">绿牌</span><span class="column-resizer" data-column-index="3" role="separator" aria-label="调整绿牌列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th><span class="column-head" data-i18n="colYellow">黄牌</span><span class="column-resizer" data-column-index="4" role="separator" aria-label="调整黄牌列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th><span class="column-head" data-i18n="colRed">红牌</span><span class="column-resizer" data-column-index="5" role="separator" aria-label="调整红牌列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th><span class="column-head" data-i18n="colBell">铃声</span><span class="column-resizer" data-column-index="6" role="separator" aria-label="调整铃声列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th><span class="column-head" data-i18n="colChildren">子环节模板</span><span class="column-resizer" data-column-index="7" role="separator" aria-label="调整子环节模板列宽" tabindex="0" title="拖动调整列宽"></span></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="agendaTableBody"></tbody>
+                </table>
+              </div>
+              <div class="button-row">
+                <button id="saveAgenda" class="btn primary" type="button" data-i18n="saveAgenda">保存并开始计时</button>
+                <button id="saveOnly" class="btn" type="button" data-i18n="saveOnly">保存</button>
+              </div>
+              <div id="saveStatus" class="status-line" role="status"></div>
+            </section>
+          </div>
         </div>
         <p class="creator-note" data-i18n-html="creatorNote">本工具由<a href="https://risimp.com/" target="_blank" rel="noopener noreferrer">锐意知能</a>创始人兔会制作，关注微信公众号「兔会」，学习制作「兔会计时器」这样的小工具</p>
       </div>
@@ -3609,6 +4111,9 @@
             <div class="agenda-panel-header">
               <p class="side-label" data-i18n="agenda">议程</p>
               <div class="agenda-header-actions">
+                <button id="addAgendaDuringRun" class="agenda-icon-action" type="button" aria-label="新增议程环节" title="新增议程环节" data-i18n-aria="addAgendaItem" data-i18n-title="addAgendaItem">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                </button>
                 <button id="downloadCsv" class="agenda-icon-action" type="button" aria-label="下载时间报告 CSV" title="下载时间报告 CSV" data-i18n-aria="downloadCsv" data-i18n-title="downloadCsv">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
                 </button>
@@ -3623,6 +4128,30 @@
       </div>
     </section>
   </main>
+
+  <div id="agendaContextMenu" class="agenda-context-menu" role="menu" hidden>
+    <button type="button" role="menuitem" data-agenda-menu-action="edit" data-i18n="editAgendaItem">修改环节</button>
+    <button type="button" role="menuitem" data-agenda-menu-action="delete" class="danger" data-i18n="deleteAgendaItem">删除环节</button>
+  </div>
+
+  <div id="agendaEditor" class="agenda-editor-overlay" hidden>
+    <div class="agenda-editor-dialog" role="dialog" aria-modal="true" aria-labelledby="agendaEditorTitle">
+      <h3 id="agendaEditorTitle" data-i18n="editAgendaItem">修改环节</h3>
+      <label>
+        <span data-i18n="agendaItemTitle">环节名称</span>
+        <input id="agendaEditTitle" type="text">
+      </label>
+      <label>
+        <span data-i18n="agendaItemDuration">时间（分钟或 mm:ss）</span>
+        <input id="agendaEditDuration" type="text" inputmode="decimal">
+      </label>
+      <p id="agendaEditHint" data-i18n="agendaEditHint">时间会同步为当前环节的红牌时间。</p>
+      <div class="agenda-editor-actions">
+        <button id="agendaEditCancel" class="btn secondary" type="button" data-i18n="cancel">取消</button>
+        <button id="agendaEditSave" class="btn primary" type="button" data-i18n="saveOnly">保存</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const STORAGE_KEY = "tuTimer.v2";
@@ -3877,11 +4406,11 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         meetingNameLabel: "本次会议名",
         meetingNamePlaceholder: "例如：周三例会",
         sampleMeetingName: "方兴知言俱乐部第一次示范会议",
-        pasteMode: "粘贴模式",
-        simpleAgenda: "简版议程",
-        simpleAgendaHint: "使用默认红黄绿牌时间",
-        fullAgenda: "完整议程",
-        fullAgendaHint: "设定红黄绿牌时间",
+        pasteMode: "提示词类型",
+        simpleAgenda: "简版提示词",
+        simpleAgendaHint: "不自定义红牌、黄牌、绿牌时间",
+        fullAgenda: "完整提示词",
+        fullAgendaHint: "需要自定义红牌、黄牌、绿牌时间",
         copyPrompt: "复制提示词",
         pasteAgendaAria: "粘贴议程表",
         pasteAgendaPlaceholder: "粘贴议程",
@@ -3901,7 +4430,24 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         resizeColumn: "调整{label}列宽",
         resizeTitle: "拖动调整列宽",
         saveAgenda: "保存并开始计时",
+        saveAndReturnTimer: "保存并返回计时",
         saveOnly: "保存",
+        returnToTimer: "返回计时",
+        importStepsAria: "导入步骤",
+        stepPrompt: "复制提示词",
+        stepPaste: "粘贴结果",
+        stepPreview: "检查表格",
+        promptStepTitle: "提示词和议程一起发给大模型",
+        promptModeNote: "区别：是否需要自定义红牌、黄牌、绿牌的时间。",
+        promptStepItem1: "复制提示词",
+        promptStepItem2: "把提示词和议程图片、文字或 Excel 表一起发给 AI",
+        promptStepItem3: "模型输出表格后，进入下一步粘贴结果",
+        openDeepSeek: "打开 DeepSeek",
+        nextStep: "下一步",
+        backStep: "上一步",
+        exampleScreenshotAlt: "DeepSeek 导入议程示例截图",
+        pasteResultTitle: "粘贴AI输出的结果",
+        savedReturnToTimer: "已保存，当前计时继续。",
         creatorNote: "本工具由<a href=\"https://risimp.com/\" target=\"_blank\" rel=\"noopener noreferrer\">锐意知能</a>创始人兔会制作，关注微信公众号「兔会」，学习制作「兔会计时器」这样的小工具",
         collapseAgenda: "收起议程",
         expandAgenda: "展开议程",
@@ -3921,6 +4467,7 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         parentRemaining: "剩余 {time}",
         parentOvertime: "超时 {time}",
         waiting: "待开始",
+        timerReady: "待开始",
         running: "进行中",
         overtimeRunning: "超时中",
         timerPaused: "计时暂停",
@@ -3947,8 +4494,18 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         currentSegmentName: "当前环节名称",
         tempName: "临时名称",
         agenda: "议程",
+        addAgendaItem: "新增议程环节",
         downloadCsv: "下载时间报告 CSV",
         copyReportPrompt: "复制时间报告总结提示词",
+        editAgendaItem: "修改环节",
+        deleteAgendaItem: "删除环节",
+        agendaItemTitle: "环节名称",
+        agendaItemDuration: "时间（分钟或 mm:ss）",
+        agendaEditHint: "时间会同步为当前环节的红牌时间。",
+        cancel: "取消",
+        deleteActiveAgendaDenied: "当前正在计时的环节不能删除。",
+        confirmDeleteAgendaItem: "删除“{title}”吗？相关时间记录也会一起删除。",
+        agendaRowsLockedDuringRun: "会议进行中请在右侧议程区新增或删除环节。",
         segmentFallback: "环节 {number}",
         childFallback: "子环节 {number}",
         childRoundLabel: "第{round}位 {title}",
@@ -3986,8 +4543,8 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         copyFailed: "复制失败",
         copiedPromptLabel: "已复制提示词",
         copiedPromptStatus: "已复制{mode}提示词。",
-        fullPromptName: "完整议程",
-        simplePromptName: "简版议程",
+        fullPromptName: "完整提示词",
+        simplePromptName: "简版提示词",
         copyPromptFailed: "复制失败，请手动复制提示词。",
         deleteRow: "删除第 {number} 行",
         csvHeaders: ["会议名", "类型", "父环节", "环节名", "描述", "计划时长", "实际用时", "提前/超时", "状态", "开始时间", "结束时间"],
@@ -4027,11 +4584,11 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         meetingNameLabel: "Meeting name",
         meetingNamePlaceholder: "Example: Wednesday meeting",
         sampleMeetingName: "WiseTalk Club First Demo Meeting",
-        pasteMode: "Paste mode",
-        simpleAgenda: "Simple agenda",
-        simpleAgendaHint: "Use default red/yellow/green card times",
-        fullAgenda: "Full agenda",
-        fullAgendaHint: "Set red/yellow/green card times",
+        pasteMode: "Prompt type",
+        simpleAgenda: "Simple prompt",
+        simpleAgendaHint: "Do not customize red/yellow/green card times",
+        fullAgenda: "Full prompt",
+        fullAgendaHint: "Customize red/yellow/green card times",
         copyPrompt: "Copy prompt",
         pasteAgendaAria: "Paste agenda table",
         pasteAgendaPlaceholder: "Paste agenda",
@@ -4051,7 +4608,24 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         resizeColumn: "Resize {label} column",
         resizeTitle: "Drag to resize column",
         saveAgenda: "Save and Start",
+        saveAndReturnTimer: "Save and return",
         saveOnly: "Save",
+        returnToTimer: "Back to timer",
+        importStepsAria: "Import steps",
+        stepPrompt: "Copy prompt",
+        stepPaste: "Paste result",
+        stepPreview: "Check table",
+        promptStepTitle: "Send the prompt and agenda to an AI model",
+        promptModeNote: "Difference: whether you need to customize red/yellow/green card times.",
+        promptStepItem1: "Copy the prompt",
+        promptStepItem2: "Send the prompt with the agenda image, text, or Excel sheet to AI",
+        promptStepItem3: "After the model outputs the table, go to the next step and paste the result",
+        openDeepSeek: "Open DeepSeek",
+        nextStep: "Next",
+        backStep: "Back",
+        exampleScreenshotAlt: "DeepSeek agenda import example screenshot",
+        pasteResultTitle: "Paste AI output",
+        savedReturnToTimer: "Saved. The current timer is still running.",
         creatorNote: "Built by Tukuai, founder of <a href=\"https://risimp.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Risimp</a>. Follow the WeChat account “兔会” to learn how to build small tools like TuTimer.",
         collapseAgenda: "Collapse agenda",
         expandAgenda: "Expand agenda",
@@ -4071,6 +4645,7 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         parentRemaining: "Remaining {time}",
         parentOvertime: "Overtime {time}",
         waiting: "Waiting",
+        timerReady: "Ready to start",
         running: "Running",
         overtimeRunning: "Overtime",
         timerPaused: "Timer paused",
@@ -4097,8 +4672,18 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         currentSegmentName: "Current segment name",
         tempName: "Temporary name",
         agenda: "Agenda",
+        addAgendaItem: "Add agenda item",
         downloadCsv: "Download time report CSV",
         copyReportPrompt: "Copy time report summary prompt",
+        editAgendaItem: "Edit segment",
+        deleteAgendaItem: "Delete segment",
+        agendaItemTitle: "Segment name",
+        agendaItemDuration: "Time (minutes or mm:ss)",
+        agendaEditHint: "The time is synced to this segment's red-card time.",
+        cancel: "Cancel",
+        deleteActiveAgendaDenied: "The segment currently being timed cannot be deleted.",
+        confirmDeleteAgendaItem: "Delete \"{title}\"? Related timing records will also be deleted.",
+        agendaRowsLockedDuringRun: "During a meeting, add or delete segments from the agenda panel on the right.",
         segmentFallback: "Segment {number}",
         childFallback: "Child segment {number}",
         childRoundLabel: "Person {round} · {title}",
@@ -4286,10 +4871,13 @@ Then produce:
     }
 
     function localizeActiveSampleAgenda(localizedAgenda) {
-      if (state.active?.type !== "agenda" || state.active.sourceIndex == null) return;
-      const localizedItem = localizedAgenda[state.active.sourceIndex];
+      if (state.active?.type !== "agenda") return;
+      const index = findAgendaIndexForFocus(state.active);
+      const localizedItem = localizedAgenda[index];
       if (!localizedItem) return;
       state.active.item = clone(localizedItem);
+      state.active.itemId = localizedItem.id || state.active.itemId || null;
+      state.active.sourceIndex = index;
       if (!state.activeChild) return;
       const template = childTemplatesFor(localizedItem)[state.activeChild.childTemplateIndex || 0];
       if (!template) {
@@ -4325,11 +4913,21 @@ Then produce:
       settingsView: document.getElementById("settingsView"),
       timerView: document.getElementById("timerView"),
       timerShell: document.getElementById("timerShell"),
+      promptStep: document.getElementById("promptStep"),
+      settingsGrid: document.getElementById("settingsGrid"),
+      stepPills: [...document.querySelectorAll("[data-step-pill]")],
+      returnToTimer: document.getElementById("returnToTimer"),
       meetingNameInput: document.getElementById("meetingNameInput"),
       pasteModeInputs: [...document.querySelectorAll('input[name="pasteMode"]')],
       agendaInput: document.getElementById("agendaInput"),
       copyPrompt: document.getElementById("copyPrompt"),
+      promptStatus: document.getElementById("promptStatus"),
       parseAgenda: document.getElementById("parseAgenda"),
+      nextToPaste: document.getElementById("nextToPaste"),
+      nextToPasteStep: document.getElementById("nextToPasteStep"),
+      backToPrompt: document.getElementById("backToPrompt"),
+      nextToPreview: document.getElementById("nextToPreview"),
+      backToPaste: document.getElementById("backToPaste"),
       loadExample: document.getElementById("loadExample"),
       clearDraft: document.getElementById("clearDraft"),
       parseStatus: document.getElementById("parseStatus"),
@@ -4376,11 +4974,19 @@ Then produce:
       undoSwitch: document.getElementById("undoSwitch"),
       totalTime: document.getElementById("totalTime"),
       downloadCsv: document.getElementById("downloadCsv"),
+      addAgendaDuringRun: document.getElementById("addAgendaDuringRun"),
       copyReportPromptSide: document.getElementById("copyReportPromptSide"),
       activeTitleInput: document.getElementById("activeTitleInput"),
       tempNameInput: document.getElementById("tempNameInput"),
       agendaPanel: document.getElementById("agendaPanel"),
       agendaList: document.getElementById("agendaList"),
+      agendaContextMenu: document.getElementById("agendaContextMenu"),
+      agendaEditor: document.getElementById("agendaEditor"),
+      agendaEditorTitle: document.getElementById("agendaEditorTitle"),
+      agendaEditTitle: document.getElementById("agendaEditTitle"),
+      agendaEditDuration: document.getElementById("agendaEditDuration"),
+      agendaEditCancel: document.getElementById("agendaEditCancel"),
+      agendaEditSave: document.getElementById("agendaEditSave"),
       localeButtons: [...document.querySelectorAll("[data-locale-option]")],
       localeTriggers: [...document.querySelectorAll("[data-locale-trigger]")],
       languageSwitches: [...document.querySelectorAll("[data-language-switch]")]
@@ -4390,10 +4996,17 @@ Then produce:
     let rafId = null;
     let audioContext = null;
     const buttonFeedbackTimers = new WeakMap();
+    let agendaContextItemId = "";
+    let agendaEditState = null;
+    let agendaDrag = null;
+    let agendaLongPressTimer = null;
+    let suppressAgendaClick = false;
 
     const state = {
       view: "settings",
       locale: currentLocale,
+      importStep: 1,
+      draftInput: "",
       meetingName: "",
       pasteMode: "simple",
       agenda: [],
@@ -4477,6 +5090,7 @@ Then produce:
         if (draftSampleMatch) draftAgenda = localizedAgenda.map((item) => clone(item));
         localizeActiveSampleAgenda(localizedAgenda);
         localizeSampleRecords(localizedAgenda);
+        syncRuntimeAgendaRefs();
         state.undoStack = [];
       } else if (draftSampleMatch) {
         draftAgenda = sampleAgendaItems(state.pasteMode, locale);
@@ -4695,6 +5309,72 @@ Then produce:
       };
     }
 
+    function createAgendaId() {
+      if (window.crypto?.randomUUID) return `agenda-${window.crypto.randomUUID()}`;
+      const stamp = Date.now().toString(36);
+      const random = Math.random().toString(36).slice(2, 10);
+      return `agenda-${stamp}-${random}`;
+    }
+
+    function normalizeAgendaId(value) {
+      const id = normalizeText(value);
+      return id || "";
+    }
+
+    function sanitizeAgendaItem(item, fallbackTitle) {
+      const sanitized = sanitizeItem(item || {}, fallbackTitle);
+      return {
+        ...sanitized,
+        id: normalizeAgendaId(item?.id) || createAgendaId()
+      };
+    }
+
+    function ensureAgendaItems(items) {
+      return (Array.isArray(items) ? items : []).map((item, index) => (
+        sanitizeAgendaItem(item, t("segmentFallback", { number: index + 1 }))
+      ));
+    }
+
+    function findAgendaIndexById(itemId) {
+      const id = normalizeAgendaId(itemId);
+      if (!id) return -1;
+      return state.agenda.findIndex((item) => normalizeAgendaId(item.id) === id);
+    }
+
+    function findAgendaIndexForFocus(focus) {
+      if (!focus) return -1;
+      const byId = findAgendaIndexById(focus.itemId || focus.item?.id);
+      if (byId >= 0) return byId;
+      const index = Math.round(numberOr(focus.sourceIndex, -1));
+      return state.agenda[index] ? index : -1;
+    }
+
+    function recordMatchesAgendaItem(record, item, index) {
+      const itemId = normalizeAgendaId(item?.id);
+      if (itemId && (record.itemId === itemId || record.parentItemId === itemId)) return true;
+      return record.sourceIndex === index || record.parentSourceIndex === index;
+    }
+
+    function findAgendaIndexForRecord(record) {
+      const byItemId = findAgendaIndexById(record.itemId);
+      if (byItemId >= 0) return byItemId;
+      const byParentId = findAgendaIndexById(record.parentItemId);
+      if (byParentId >= 0) return byParentId;
+      const index = Math.round(numberOr(record.parentSourceIndex ?? record.sourceIndex, -1));
+      return state.agenda[index] ? index : -1;
+    }
+
+    function syncNextAgendaIndex() {
+      if (state.active?.type === "agenda") {
+        const index = findAgendaIndexForFocus(state.active);
+        if (index >= 0) {
+          state.nextAgendaIndex = Math.min(state.agenda.length, index + 1);
+          return;
+        }
+      }
+      state.nextAgendaIndex = Math.min(state.agenda.length, Math.max(0, Math.round(numberOr(state.nextAgendaIndex, 0))));
+    }
+
     function splitLine(line) {
       if (line.includes("\t")) return line.split("\t");
       const trimmed = line.trim();
@@ -4767,7 +5447,7 @@ Then produce:
         const childTemplates = parseChildTemplates(cells[map.children]);
         const defaults = autoRule(redAtSec);
         const useFullRule = map.green != null || map.yellow != null || map.red != null || state.pasteMode === "full";
-        return sanitizeItem({
+        return sanitizeAgendaItem({
           title,
           description,
           durationSec: duration || redAtSec,
@@ -4782,16 +5462,26 @@ Then produce:
 
     function draftRowFromInputs(row) {
       const inputs = row.querySelectorAll("input");
+      const itemId = row.dataset.itemId || "";
+      const previousItem = state.agenda.find((item) => item.id === itemId);
       const title = inputs[0].value;
       const description = inputs[1].value;
       const durationSec = parseDuration(inputs[2].value, "minutes") || 300;
-      const greenAtSec = parseDuration(inputs[3].value, "minutes");
-      const yellowAtSec = parseDuration(inputs[4].value, "minutes");
-      const redAtSec = parseDuration(inputs[5].value, "minutes") || durationSec;
+      let greenAtSec = parseDuration(inputs[3].value, "minutes");
+      let yellowAtSec = parseDuration(inputs[4].value, "minutes");
+      let redAtSec = parseDuration(inputs[5].value, "minutes") || durationSec;
       const dingAfterSec = parseDuration(inputs[6].value, "seconds");
       const childTemplates = parseChildTemplates(inputs[7]?.value || "");
+      const durationChanged = previousItem && durationSec !== previousItem.durationSec;
+      const redChanged = previousItem && redAtSec !== previousItem.redAtSec;
+      if (durationChanged && !redChanged) redAtSec = durationSec;
       const defaults = autoRule(redAtSec);
-      return sanitizeItem({
+      const greenChanged = previousItem && greenAtSec !== previousItem.greenAtSec;
+      const yellowChanged = previousItem && yellowAtSec !== previousItem.yellowAtSec;
+      if ((durationChanged || redChanged) && !greenChanged) greenAtSec = defaults.greenAtSec;
+      if ((durationChanged || redChanged) && !yellowChanged) yellowAtSec = defaults.yellowAtSec;
+      return sanitizeAgendaItem({
+        id: itemId,
         title,
         description,
         durationSec,
@@ -4841,8 +5531,10 @@ Then produce:
     function renderDraftTable() {
       applyPreviewColumnWidths();
       nodes.agendaTableBody.innerHTML = "";
+      const rowsLocked = Boolean(state.active);
       draftAgenda.forEach((item, index) => {
         const tr = document.createElement("tr");
+        tr.dataset.itemId = item.id || "";
         tr.innerHTML = `
           <td><input type="text" value="${escapeAttr(item.title)}" aria-label="${escapeAttr(t("colTitle"))}"></td>
           <td><input type="text" value="${escapeAttr(item.description || "")}" aria-label="${escapeAttr(t("colDescription"))}"></td>
@@ -4852,7 +5544,7 @@ Then produce:
           <td><input type="text" value="${escapeAttr(formatInputTime(item.redAtSec, "minutes"))}" aria-label="${escapeAttr(t("ruleRed", { time: "" }).trim())}"></td>
           <td><input type="text" value="${escapeAttr(formatInputTime(item.dingAfterSec, "seconds"))}" aria-label="${escapeAttr(t("colBell"))}"></td>
           <td><input type="text" value="${escapeAttr(formatChildTemplates(item.childTemplates))}" aria-label="${escapeAttr(t("colChildren"))}"></td>
-          <td><button class="btn icon delete-row" type="button" aria-label="${escapeAttr(t("deleteRow", { number: index + 1 }))}">×</button></td>
+          <td><button class="btn icon delete-row" type="button" aria-label="${escapeAttr(t("deleteRow", { number: index + 1 }))}" ${rowsLocked ? "disabled" : ""}>×</button></td>
         `;
         nodes.agendaTableBody.appendChild(tr);
       });
@@ -4885,7 +5577,7 @@ Then produce:
     }
 
     function refreshLocalizedStatuses() {
-      [nodes.parseStatus, nodes.saveStatus].forEach((node) => {
+      [nodes.promptStatus, nodes.parseStatus, nodes.saveStatus].forEach((node) => {
         if (!node?.dataset.statusKey) return;
         let params = {};
         try {
@@ -4896,11 +5588,164 @@ Then produce:
       });
     }
 
+    function nowEpoch() {
+      return Date.now();
+    }
+
+    function normalizeImportStep(value) {
+      const step = Math.round(numberOr(value, 1));
+      return step >= 1 && step <= 3 ? step : 1;
+    }
+
+    function hasTimerState() {
+      return Boolean(state.active || state.records.length || state.agenda.length);
+    }
+
+    function serializeFocus(focus, elapsed) {
+      if (!focus) return null;
+      const running = Boolean(focus.running);
+      return {
+        item: clone(focus.item),
+        type: focus.type,
+        itemId: focus.itemId || focus.item?.id || null,
+        sourceIndex: focus.sourceIndex,
+        parentItemId: focus.parentItemId || null,
+        parentTitle: focus.parentTitle || "",
+        childTemplateIndex: focus.childTemplateIndex ?? null,
+        childRound: focus.childRound ?? 1,
+        elapsedBase: Math.max(0, Number(elapsed) || 0),
+        startedAtEpoch: running ? nowEpoch() : null,
+        startedAtPerf: null,
+        running,
+        dinged: Boolean(focus.dinged),
+        startedAtWall: focus.startedAtWall || new Date().toISOString(),
+        childCycleIndex: focus.childCycleIndex ?? 0
+      };
+    }
+
+    function restoreFocus(data, typeFallback = "agenda") {
+      if (!data || !data.item) return null;
+      const type = data.type || typeFallback;
+      const running = Boolean(data.running);
+      const startedAtEpoch = Number(data.startedAtEpoch);
+      const restoredItem = sanitizeItem(data.item, data.item.title || t("untitledSegment"));
+      if (data.item?.id) restoredItem.id = data.item.id;
+      return {
+        item: restoredItem,
+        type,
+        itemId: data.itemId || data.item?.id || null,
+        sourceIndex: data.sourceIndex ?? null,
+        parentItemId: data.parentItemId || null,
+        parentTitle: data.parentTitle || "",
+        childTemplateIndex: data.childTemplateIndex ?? null,
+        childRound: data.childRound ?? 1,
+        elapsedBase: Math.max(0, numberOr(data.elapsedBase, 0)),
+        startedAtEpoch: running && Number.isFinite(startedAtEpoch) && startedAtEpoch > 0 ? startedAtEpoch : running ? nowEpoch() : null,
+        startedAtPerf: running ? performance.now() : null,
+        running,
+        dinged: Boolean(data.dinged),
+        startedAtWall: data.startedAtWall || new Date().toISOString(),
+        childCycleIndex: data.childCycleIndex ?? 0
+      };
+    }
+
+    function relinkFocusToAgenda(focus) {
+      if (!focus || focus.type !== "agenda") return;
+      const index = findAgendaIndexForFocus(focus);
+      if (index < 0) return;
+      const item = state.agenda[index];
+      focus.item = clone(item);
+      focus.itemId = item.id;
+      focus.sourceIndex = index;
+    }
+
+    function relinkChildToParent() {
+      if (!state.activeChild || !state.active) return;
+      const parentIndex = findAgendaIndexForFocus(state.active);
+      if (parentIndex < 0) return;
+      const parent = state.agenda[parentIndex];
+      state.activeChild.sourceIndex = parentIndex;
+      state.activeChild.parentSourceIndex = parentIndex;
+      state.activeChild.parentItemId = parent.id;
+      state.activeChild.parentTitle = parent.title;
+    }
+
+    function relinkRecordsToAgenda() {
+      state.records = state.records.map((record) => {
+        const index = findAgendaIndexForRecord(record);
+        if (index < 0) return record;
+        const item = state.agenda[index];
+        if (record.type === "child") {
+          return {
+            ...record,
+            parentItemId: item.id,
+            parentSourceIndex: index,
+            sourceIndex: index,
+            parentTitle: item.title
+          };
+        }
+        return {
+          ...record,
+          itemId: item.id,
+          sourceIndex: index
+        };
+      });
+    }
+
+    function syncRuntimeAgendaRefs() {
+      state.agenda = ensureAgendaItems(state.agenda);
+      draftAgenda = ensureAgendaItems(draftAgenda);
+      relinkFocusToAgenda(state.active);
+      relinkChildToParent();
+      relinkRecordsToAgenda();
+      syncNextAgendaIndex();
+    }
+
+    function renderImportControls() {
+      state.importStep = normalizeImportStep(state.importStep);
+      nodes.promptStep.hidden = state.importStep !== 1;
+      nodes.settingsGrid.hidden = state.importStep === 1;
+      nodes.settingsGrid.dataset.importStep = String(state.importStep);
+      nodes.stepPills.forEach((pill) => {
+        const step = Number(pill.dataset.stepPill);
+        const isActive = step === state.importStep;
+        const canReturn = step < state.importStep;
+        pill.classList.toggle("active", isActive);
+        pill.disabled = !canReturn;
+        pill.setAttribute("aria-current", isActive ? "step" : "false");
+        pill.setAttribute("aria-disabled", String(!canReturn));
+      });
+      nodes.returnToTimer.hidden = !hasTimerState();
+      nodes.saveAgenda.textContent = state.active ? t("saveAndReturnTimer") : t("saveAgenda");
+      if (nodes.addRow) nodes.addRow.disabled = Boolean(state.active);
+      if (state.importStep === 3) applyPreviewColumnWidths();
+    }
+
+    function setImportStep(step, options = {}) {
+      state.importStep = normalizeImportStep(step);
+      renderImportControls();
+      if (options.persist !== false) saveData();
+      if (state.importStep > 1) {
+        requestAnimationFrame(() => {
+          if (nodes.agendaInput && document.activeElement !== nodes.agendaInput) updateAgendaTabSize();
+        });
+      }
+    }
+
     function saveData() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         meetingName: state.meetingName,
         pasteMode: state.pasteMode,
         agenda: state.agenda,
+        draftAgenda,
+        draftInput: nodes.agendaInput?.value || state.draftInput || "",
+        importStep: state.importStep,
+        records: state.records,
+        active: serializeFocus(state.active, currentElapsedSeconds()),
+        activeChild: serializeFocus(state.activeChild, currentChildElapsedSeconds()),
+        nextAgendaIndex: state.nextAgendaIndex,
+        tempCounter: state.tempCounter,
+        expandedItems: [...state.expandedItems],
         tempName: t("tempSegment"),
         muted: state.muted,
         showTime: state.showTime,
@@ -4919,9 +5764,20 @@ Then produce:
         state.meetingName = normalizeText(data.meetingName);
         state.pasteMode = data.pasteMode === "full" ? "full" : "simple";
         if (Array.isArray(data.agenda)) {
-          state.agenda = data.agenda.map((item, index) => sanitizeItem(item, t("segmentFallback", { number: index + 1 })));
+          state.agenda = ensureAgendaItems(data.agenda);
           draftAgenda = clone(state.agenda);
         }
+        if (Array.isArray(data.draftAgenda)) {
+          draftAgenda = ensureAgendaItems(data.draftAgenda);
+        }
+        state.importStep = normalizeImportStep(data.importStep);
+        state.records = Array.isArray(data.records) ? clone(data.records) : [];
+        state.nextAgendaIndex = Math.max(0, Math.round(numberOr(data.nextAgendaIndex, state.nextAgendaIndex)));
+        state.tempCounter = Math.max(0, Math.round(numberOr(data.tempCounter, 0)));
+        state.active = restoreFocus(data.active, "agenda");
+        state.activeChild = state.active ? restoreFocus(data.activeChild, "child") : null;
+        state.undoStack = [];
+        state.expandedItems = new Set(Array.isArray(data.expandedItems) ? data.expandedItems : []);
         state.tempName = t("tempSegment");
         state.muted = Boolean(data.muted);
         state.showTime = data.showTime !== false;
@@ -4930,20 +5786,24 @@ Then produce:
         state.previewColumnWidths = normalizePreviewColumnWidths(data.previewColumnWidths);
         state.sideCollapsed = Boolean(data.sideCollapsed);
         state.footerCollapsed = Boolean(data.footerCollapsed);
+        state.draftInput = typeof data.draftInput === "string" ? data.draftInput : "";
+        syncRuntimeAgendaRefs();
       } catch {
         draftAgenda = [];
       }
     }
 
-    function switchView(view) {
+    function switchView(view, options = {}) {
       state.view = view;
       nodes.settingsView.classList.toggle("active", view === "settings");
       nodes.timerView.classList.toggle("active", view === "timer");
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      if (view === "timer" && !state.active && state.agenda.length) {
+      if (view === "timer" && options.autoStart === true && !state.active && state.agenda.length) {
         startRunFromAgenda();
       }
+      if (view === "settings") renderImportControls();
       render();
+      saveData();
       requestAnimationFrame(() => {
         window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       });
@@ -4951,7 +5811,7 @@ Then produce:
 
     function startRunFromAgenda() {
       resetRunState();
-      activateNextAgenda(false);
+      saveData();
     }
 
     function resetRunState() {
@@ -4966,12 +5826,17 @@ Then produce:
     }
 
     function createActiveFromItem(item, type, sourceIndex = null) {
+      const activeItem = type === "agenda"
+        ? sanitizeAgendaItem(item, item.title || t("untitledSegment"))
+        : sanitizeItem(item, item.title || t("untitledSegment"));
       return {
-        item: sanitizeItem(item, item.title || t("untitledSegment")),
+        item: activeItem,
         type,
+        itemId: activeItem.id || null,
         sourceIndex,
         elapsedBase: 0,
         startedAtPerf: null,
+        startedAtEpoch: null,
         running: false,
         dinged: false,
         startedAtWall: new Date().toISOString(),
@@ -4982,21 +5847,27 @@ Then produce:
 
     function activateNextAgenda(shouldPushUndo = true) {
       if (state.activeChild) return;
+      state.agenda = ensureAgendaItems(state.agenda);
+      syncNextAgendaIndex();
       if (shouldPushUndo) pushUndoSnapshot();
       const shouldContinue = Boolean(state.active?.running);
       if (state.active) finalizeActive();
       if (state.nextAgendaIndex >= state.agenda.length) {
         state.active = null;
+        saveData();
         render();
         return;
       }
       const index = state.nextAgendaIndex;
       state.active = createActiveFromItem(state.agenda[index], "agenda", index);
+      state.active.itemId = state.agenda[index].id;
       if (shouldContinue) {
         state.active.running = true;
         state.active.startedAtPerf = performance.now();
+        state.active.startedAtEpoch = nowEpoch();
       }
       state.nextAgendaIndex = index + 1;
+      saveData();
       render();
     }
 
@@ -5007,11 +5878,13 @@ Then produce:
         item: { ...item, title },
         type: "child",
         sourceIndex: parent.sourceIndex,
+        parentItemId: parent.itemId || parent.item?.id || null,
         parentTitle: parent.item.title,
         childTemplateIndex: templateIndex,
         childRound: round,
         elapsedBase: 0,
         startedAtPerf: null,
+        startedAtEpoch: null,
         running: false,
         dinged: false,
         startedAtWall: new Date().toISOString()
@@ -5036,9 +5909,12 @@ Then produce:
       if (shouldContinue) {
         state.active.running = true;
         if (state.active.startedAtPerf == null) state.active.startedAtPerf = performance.now();
+        if (state.active.startedAtEpoch == null) state.active.startedAtEpoch = nowEpoch();
         state.activeChild.running = true;
         state.activeChild.startedAtPerf = performance.now();
+        state.activeChild.startedAtEpoch = nowEpoch();
       }
+      saveData();
       render();
     }
 
@@ -5047,6 +5923,7 @@ Then produce:
       pushUndoSnapshot();
       finalizeActiveChild();
       state.activeChild = null;
+      saveData();
       render();
     }
 
@@ -5072,7 +5949,9 @@ Then produce:
       pushUndoSnapshot();
       focus.elapsedBase = 0;
       focus.startedAtPerf = focus.running ? performance.now() : null;
+      focus.startedAtEpoch = focus.running ? nowEpoch() : null;
       focus.dinged = false;
+      saveData();
       render();
     }
 
@@ -5098,7 +5977,9 @@ Then produce:
       if (shouldContinue) {
         state.active.running = true;
         state.active.startedAtPerf = performance.now();
+        state.active.startedAtEpoch = nowEpoch();
       }
+      saveData();
       render();
     }
 
@@ -5110,8 +5991,10 @@ Then produce:
       const active = state.active ? {
         item: clone(state.active.item),
         type: state.active.type,
+        itemId: state.active.itemId || state.active.item?.id || null,
         sourceIndex: state.active.sourceIndex,
         elapsedBase: currentElapsedSeconds(),
+        startedAtEpoch: state.active.running ? nowEpoch() : null,
         running: state.active.running,
         dinged: state.active.dinged,
         startedAtWall: state.active.startedAtWall,
@@ -5121,11 +6004,14 @@ Then produce:
       const activeChild = state.activeChild ? {
         item: clone(state.activeChild.item),
         type: state.activeChild.type,
+        itemId: state.activeChild.itemId || null,
         sourceIndex: state.activeChild.sourceIndex,
+        parentItemId: state.activeChild.parentItemId || null,
         parentTitle: state.activeChild.parentTitle,
         childTemplateIndex: state.activeChild.childTemplateIndex,
         childRound: state.activeChild.childRound,
         elapsedBase: currentChildElapsedSeconds(),
+        startedAtEpoch: state.activeChild.running ? nowEpoch() : null,
         running: state.activeChild.running,
         dinged: state.activeChild.dinged,
         startedAtWall: state.activeChild.startedAtWall
@@ -5147,9 +6033,11 @@ Then produce:
         state.active = {
           item: clone(snapshot.active.item),
           type: snapshot.active.type,
+          itemId: snapshot.active.itemId || snapshot.active.item?.id || null,
           sourceIndex: snapshot.active.sourceIndex,
           elapsedBase: snapshot.active.elapsedBase,
           startedAtPerf: snapshot.active.running ? performance.now() : null,
+          startedAtEpoch: snapshot.active.running ? nowEpoch() : null,
           running: snapshot.active.running,
           dinged: snapshot.active.dinged,
           startedAtWall: snapshot.active.startedAtWall,
@@ -5163,12 +6051,15 @@ Then produce:
         state.activeChild = {
           item: clone(snapshot.activeChild.item),
           type: "child",
+          itemId: snapshot.activeChild.itemId || null,
           sourceIndex: snapshot.activeChild.sourceIndex,
+          parentItemId: snapshot.activeChild.parentItemId || null,
           parentTitle: snapshot.activeChild.parentTitle,
           childTemplateIndex: snapshot.activeChild.childTemplateIndex,
           childRound: snapshot.activeChild.childRound,
           elapsedBase: snapshot.activeChild.elapsedBase,
           startedAtPerf: snapshot.activeChild.running ? performance.now() : null,
+          startedAtEpoch: snapshot.activeChild.running ? nowEpoch() : null,
           running: snapshot.activeChild.running,
           dinged: snapshot.activeChild.dinged,
           startedAtWall: snapshot.activeChild.startedAtWall
@@ -5177,6 +6068,7 @@ Then produce:
         state.activeChild = null;
       }
       state.undoStack = [];
+      saveData();
       render();
     }
 
@@ -5188,16 +6080,24 @@ Then produce:
 
     function currentElapsedSeconds() {
       if (!state.active) return 0;
-      const runningDelta = state.active.running && state.active.startedAtPerf != null
-        ? (performance.now() - state.active.startedAtPerf) / 1000
+      const runningDelta = state.active.running
+        ? state.active.startedAtEpoch != null
+          ? (nowEpoch() - state.active.startedAtEpoch) / 1000
+          : state.active.startedAtPerf != null
+          ? (performance.now() - state.active.startedAtPerf) / 1000
+          : 0
         : 0;
       return state.active.elapsedBase + runningDelta;
     }
 
     function currentChildElapsedSeconds() {
       if (!state.activeChild) return 0;
-      const runningDelta = state.activeChild.running && state.activeChild.startedAtPerf != null
-        ? (performance.now() - state.activeChild.startedAtPerf) / 1000
+      const runningDelta = state.activeChild.running
+        ? state.activeChild.startedAtEpoch != null
+          ? (nowEpoch() - state.activeChild.startedAtEpoch) / 1000
+          : state.activeChild.startedAtPerf != null
+          ? (performance.now() - state.activeChild.startedAtPerf) / 1000
+          : 0
         : 0;
       return state.activeChild.elapsedBase + runningDelta;
     }
@@ -5213,7 +6113,9 @@ Then produce:
         title: state.activeChild.item.title,
         description: state.activeChild.item.description,
         type: "child",
+        itemId: state.activeChild.itemId || null,
         sourceIndex: state.activeChild.sourceIndex,
+        parentItemId: state.activeChild.parentItemId || state.active?.itemId || state.active?.item?.id || null,
         parentSourceIndex: state.activeChild.sourceIndex,
         parentTitle: state.activeChild.parentTitle,
         childTemplateIndex: state.activeChild.childTemplateIndex,
@@ -5242,6 +6144,7 @@ Then produce:
         title: state.active.item.title,
         description: state.active.item.description,
         type: state.active.type,
+        itemId: state.active.itemId || state.active.item?.id || null,
         sourceIndex: state.active.sourceIndex,
         startedAt: state.active.startedAtWall,
         endedAt: new Date().toISOString(),
@@ -5265,24 +6168,31 @@ Then produce:
         if (state.activeChild.running) {
           state.active.elapsedBase = currentElapsedSeconds();
           state.active.startedAtPerf = null;
+          state.active.startedAtEpoch = null;
           state.active.running = false;
           state.activeChild.elapsedBase = currentChildElapsedSeconds();
           state.activeChild.startedAtPerf = null;
+          state.activeChild.startedAtEpoch = null;
           state.activeChild.running = false;
         } else {
           state.active.startedAtPerf = performance.now();
+          state.active.startedAtEpoch = nowEpoch();
           state.active.running = true;
           state.activeChild.startedAtPerf = performance.now();
+          state.activeChild.startedAtEpoch = nowEpoch();
           state.activeChild.running = true;
         }
       } else if (state.active.running) {
         state.active.elapsedBase = currentElapsedSeconds();
         state.active.startedAtPerf = null;
+        state.active.startedAtEpoch = null;
         state.active.running = false;
       } else {
         state.active.startedAtPerf = performance.now();
+        state.active.startedAtEpoch = nowEpoch();
         state.active.running = true;
       }
+      saveData();
       render();
     }
 
@@ -5306,6 +6216,7 @@ Then produce:
     }
 
     function render() {
+      renderImportControls();
       renderLayoutControls();
       renderTimer();
       renderLists();
@@ -5325,7 +6236,7 @@ Then produce:
       if (!state.activeChild && state.active?.type === "temp") {
         nodes.nextAgenda.disabled = state.nextAgendaIndex >= state.agenda.length;
       } else if (!state.activeChild) {
-        nodes.nextAgenda.disabled = !state.active && state.nextAgendaIndex >= state.agenda.length;
+        nodes.nextAgenda.disabled = !state.active || state.nextAgendaIndex >= state.agenda.length;
       }
       nodes.startPause.disabled = !state.active && state.nextAgendaIndex >= state.agenda.length;
       if (!state.activeChild) nodes.childSegment.disabled = !state.active || state.active.type !== "agenda";
@@ -5348,10 +6259,12 @@ Then produce:
       const child = state.activeChild;
       const focus = child || parent;
       const elapsed = child ? currentChildElapsedSeconds() : currentElapsedSeconds();
-      const item = focus?.item;
+      const readyIndex = !focus ? Math.max(0, Math.round(numberOr(state.nextAgendaIndex, 0))) : -1;
+      const readyItem = !focus && readyIndex < state.agenda.length ? state.agenda[readyIndex] : null;
+      const item = focus?.item || readyItem;
       const isTemp = focus?.type === "temp";
       const signal = isTemp || !focus || elapsed === 0 && !focus.running ? "neutral" : signalState(item, elapsed);
-      const isComplete = !focus && state.agenda.length > 0;
+      const isComplete = !focus && state.agenda.length > 0 && !readyItem;
       const isRunning = Boolean(focus?.running);
       nodes.signalPanel.className = `signal ${signal}`;
       nodes.signalPanel.classList.toggle("time-hidden", !state.showTime);
@@ -5360,10 +6273,10 @@ Then produce:
       nodes.startPause.setAttribute("aria-label", isRunning ? t("pause") : t("start"));
       const dingAlert = !isTemp && focus && signal === "red" && elapsed >= item.redAtSec + item.dingAfterSec;
       nodes.signalPanel.classList.toggle("ding-alert", Boolean(dingAlert));
-      renderRunningIndicator(focus);
+      renderRunningIndicator(focus, readyItem);
       renderParentMini();
 
-      if (!focus || !item) {
+      if (!item) {
         nodes.currentTitle.textContent = state.agenda.length ? t("allDone") : t("notLoaded");
         nodes.currentDescription.textContent = "";
         nodes.currentDescription.classList.add("hidden");
@@ -5383,14 +6296,21 @@ Then produce:
         nodes.mainTime.classList.toggle("overtime", !isTemp && remaining < 0);
         nodes.elapsedChip.textContent = t("elapsed", { time: formatClock(elapsed) });
         nodes.ruleLine.innerHTML = isTemp ? `<span class="rule-pill bell">${t("tempPositive")}</span>` : ruleHtml(item);
-        nodes.startPause.querySelector("strong").textContent = focus.running ? t("pause") : t("start");
+        nodes.startPause.querySelector("strong").textContent = focus?.running ? t("pause") : t("start");
         setButtonLabelIfIdle(nodes.copyReportPrompt, t("reportPrompt"));
         if (document.activeElement !== nodes.activeTitleInput) {
           nodes.activeTitleInput.value = item.title;
         }
       }
 
-      renderNextCard(state.activeChild ? nextChildTemplateLabel() : state.agenda[state.nextAgendaIndex]?.title);
+      const nextTitle = state.activeChild
+        ? nextChildTemplateLabel()
+        : state.active
+        ? state.agenda[state.nextAgendaIndex]?.title
+        : readyItem
+        ? state.agenda[readyIndex + 1]?.title
+        : "";
+      renderNextCard(nextTitle);
       nodes.totalTime.textContent = formatClock(totalElapsedSeconds(), { forceHours: true });
       nodes.headerMeetingName.textContent = state.meetingName || t("meetingNameDefault");
       nodes.runMeta.textContent = t("runMeta", { records: state.records.length, agenda: state.agenda.length });
@@ -5414,11 +6334,11 @@ Then produce:
       nodes.parentMiniState.className = `parent-mini-state ${signal}`;
     }
 
-    function renderRunningIndicator(focus) {
+    function renderRunningIndicator(focus, readyItem = null) {
       const running = Boolean(focus?.running);
       nodes.runningIndicator.classList.toggle("running", running);
       nodes.runningIndicator.classList.toggle("paused", !running);
-      nodes.runningIndicatorText.textContent = running ? t("timerRunning") : t("timerPaused");
+      nodes.runningIndicatorText.textContent = running ? t("timerRunning") : readyItem ? t("timerReady") : t("timerPaused");
     }
 
     function renderNextCard(title) {
@@ -5470,7 +6390,7 @@ Then produce:
         nextHint.textContent = "→ / N";
         childStrong.textContent = t("enterChild");
         childHint.textContent = "↓ / S";
-        nodes.nextAgenda.disabled = !state.active && state.nextAgendaIndex >= state.agenda.length;
+        nodes.nextAgenda.disabled = !state.active || state.nextAgendaIndex >= state.agenda.length;
         nodes.childSegment.disabled = !hasChildTemplates;
       }
       nodes.nextAgenda.setAttribute("aria-label", nextStrong.textContent);
@@ -5602,6 +6522,8 @@ Then produce:
         title: active.item.title,
         description: active.item.description,
         type,
+        itemId: active.itemId || active.item?.id || null,
+        parentItemId: active.parentItemId || null,
         parentTitle: active.parentTitle || "",
         startedAt: active.startedAtWall,
         endedAt: "",
@@ -5677,6 +6599,8 @@ Then produce:
       const isTemp = entry.type === "temp";
       const children = entry.children || [];
       const key = entry.key;
+      const agendaId = entry.itemId || item.id || "";
+      const agendaIndex = entry.index ?? "";
       const expanded = state.expandedItems.has(key);
       const className = [
         "agenda-item",
@@ -5707,7 +6631,7 @@ Then produce:
         </div>
       ` : "";
       return `
-        <div class="${className}" data-key="${escapeAttr(key)}">
+        <div class="${className}" data-key="${escapeAttr(key)}" data-agenda-id="${escapeAttr(agendaId)}" data-agenda-index="${escapeAttr(agendaIndex)}" data-type="${escapeAttr(entry.type)}">
           <div class="agenda-row ${children.length ? "" : "single"}">
             <div class="agenda-main">
               <div class="agenda-title">
@@ -5739,11 +6663,13 @@ Then produce:
     }
 
     function currentAgendaFocusKey() {
-      if (state.activeChild && state.active?.type === "agenda" && state.active.sourceIndex != null) {
-        return `agenda-${state.active.sourceIndex}-child-${state.activeChild.startedAtWall}`;
+      if (state.activeChild && state.active?.type === "agenda") {
+        const itemId = state.active.itemId || state.active.item?.id || state.active.sourceIndex;
+        return `agenda-${itemId}-child-${state.activeChild.startedAtWall}`;
       }
-      if (state.active?.type === "agenda" && state.active.sourceIndex != null) {
-        return `agenda-${state.active.sourceIndex}`;
+      if (state.active?.type === "agenda") {
+        const itemId = state.active.itemId || state.active.item?.id || state.active.sourceIndex;
+        return `agenda-${itemId}`;
       }
       if (state.active?.type === "temp") {
         return `active-temp-${state.active.startedAtWall}`;
@@ -5752,6 +6678,7 @@ Then produce:
     }
 
     function renderLists() {
+      state.agenda = ensureAgendaItems(state.agenda);
       if (!state.agenda.length && !state.records.length && !state.active) {
         nodes.agendaList.innerHTML = `<div class="empty-state">${t("noAgenda")}</div>`;
         state.lastAgendaFocusKey = "";
@@ -5775,47 +6702,58 @@ Then produce:
       });
 
       const agendaEntryFor = (index) => {
-        if (!agendaEntries.has(index)) {
-          const isCurrent = state.active?.type === "agenda" && state.active.sourceIndex === index;
-          agendaEntries.set(index, {
-            key: `agenda-${index}`,
+        const item = state.agenda[index];
+        if (!item) return null;
+        const itemId = item.id || `index-${index}`;
+        if (!agendaEntries.has(itemId)) {
+          const isCurrent = state.active?.type === "agenda" && findAgendaIndexForFocus(state.active) === index;
+          agendaEntries.set(itemId, {
+            key: `agenda-${itemId}`,
             type: "agenda",
-            item: isCurrent ? state.active.item : state.agenda[index],
+            itemId,
+            index,
+            item: isCurrent ? state.active.item : item,
             record: null,
             isCurrent,
             children: []
           });
         }
-        return agendaEntries.get(index);
+        return agendaEntries.get(itemId);
       };
 
       const pushAgendaEntry = (index) => {
         if (pushedAgenda.has(index) || !state.agenda[index]) return;
-        entries.push(agendaEntryFor(index));
+        const entry = agendaEntryFor(index);
+        if (entry) entries.push(entry);
         pushedAgenda.add(index);
       };
 
       state.records.forEach((record, recordIndex) => {
-        if (record.type === "agenda" && record.sourceIndex != null && state.agenda[record.sourceIndex]) {
-          const entry = agendaEntryFor(record.sourceIndex);
+        const index = findAgendaIndexForRecord(record);
+        if (record.type === "agenda" && index >= 0) {
+          const entry = agendaEntryFor(index);
+          if (!entry) return;
           entry.record = record;
-          entry.item = state.agenda[record.sourceIndex];
-          pushAgendaEntry(record.sourceIndex);
-        } else if (record.type === "child" && record.parentSourceIndex != null) {
-          const entry = agendaEntryFor(record.parentSourceIndex);
+          entry.item = state.agenda[index];
+          pushAgendaEntry(index);
+        } else if (record.type === "child" && index >= 0) {
+          const entry = agendaEntryFor(index);
+          if (!entry) return;
           entry.children.push({
             title: record.title,
             record,
             isCurrent: false
           });
-          pushAgendaEntry(record.parentSourceIndex);
+          pushAgendaEntry(index);
         } else {
           entries.push(makeTempEntry(record, recordIndex));
         }
       });
 
-      if (state.active?.type === "agenda" && state.active.sourceIndex != null) {
-        const entry = agendaEntryFor(state.active.sourceIndex);
+      if (state.active?.type === "agenda") {
+        const activeIndex = findAgendaIndexForFocus(state.active);
+        const entry = agendaEntryFor(activeIndex);
+        if (entry) {
         entry.item = state.active.item;
         entry.isCurrent = true;
         if (state.activeChild) {
@@ -5825,7 +6763,8 @@ Then produce:
             isCurrent: true
           });
         }
-        pushAgendaEntry(state.active.sourceIndex);
+          pushAgendaEntry(activeIndex);
+        }
       }
 
       if (state.active?.type === "temp") {
@@ -5894,6 +6833,7 @@ Then produce:
         const dingAt = state.active.item.redAtSec + state.active.item.dingAfterSec;
         if (!state.active.dinged && elapsed >= dingAt) {
           state.active.dinged = true;
+          saveData();
           playDing();
         }
       }
@@ -5902,6 +6842,7 @@ Then produce:
         const dingAt = state.activeChild.item.redAtSec + state.activeChild.item.dingAfterSec;
         if (!state.activeChild.dinged && elapsed >= dingAt) {
           state.activeChild.dinged = true;
+          saveData();
           playDing();
         }
       }
@@ -5915,11 +6856,22 @@ Then produce:
         setLocalizedStatus(nodes.saveStatus, "needOneSegment", {}, true);
         return false;
       }
+      if (state.active && draftAgenda.length !== state.agenda.length) {
+        setLocalizedStatus(nodes.saveStatus, "agendaRowsLockedDuringRun", {}, true);
+        draftAgenda = clone(state.agenda);
+        renderDraftTable();
+        return false;
+      }
       state.meetingName = normalizeText(nodes.meetingNameInput.value);
       state.pasteMode = nodes.pasteModeInputs.find((input) => input.checked)?.value || state.pasteMode;
-      state.agenda = draftAgenda.map((item, index) => sanitizeItem(item, t("segmentFallback", { number: index + 1 })));
+      state.agenda = draftAgenda.map((item, index) => sanitizeAgendaItem({
+        ...item,
+        id: item.id || state.agenda[index]?.id
+      }, t("segmentFallback", { number: index + 1 })));
+      state.draftInput = nodes.agendaInput.value;
+      syncRuntimeAgendaRefs();
       saveData();
-      setLocalizedStatus(nodes.saveStatus, "savedCount", { count: state.agenda.length });
+      setLocalizedStatus(nodes.saveStatus, state.active ? "savedReturnToTimer" : "savedCount", { count: state.agenda.length });
       return true;
     }
 
@@ -6030,15 +6982,21 @@ Then produce:
       alignAgendaInputColumns({ rowIndex, columnIndex });
     }
 
-    function handleParseAgenda() {
+    function handleParseAgenda(options = {}) {
+      state.draftInput = nodes.agendaInput.value;
       const parsed = parseAgendaText(nodes.agendaInput.value);
       if (!parsed.length) {
         setLocalizedStatus(nodes.parseStatus, "parseNone", {}, true);
-        return;
+        saveData();
+        return false;
       }
       draftAgenda = parsed;
       renderDraftTable();
       setLocalizedStatus(nodes.parseStatus, "parsedCount", { count: draftAgenda.length });
+      if (options.advance) setImportStep(3, { persist: false });
+      saveData();
+      render();
+      return true;
     }
 
     async function copyTextToClipboard(text) {
@@ -6157,12 +7115,283 @@ Then produce:
       const mode = nodes.pasteModeInputs.find((input) => input.checked)?.value === "full" ? "full" : "simple";
       try {
         await copyTextToClipboard(promptText(mode));
-        flashButtonLabel(nodes.copyPrompt, t("copied"), t("copyPrompt"));
-        setLocalizedStatus(nodes.parseStatus, "copiedPromptStatus", { modeKey: mode === "full" ? "fullPromptName" : "simplePromptName" });
+        setLocalizedStatus(nodes.promptStatus, "copiedPromptStatus", { modeKey: mode === "full" ? "fullPromptName" : "simplePromptName" });
       } catch {
-        flashButtonLabel(nodes.copyPrompt, t("copyFailed"), t("copyPrompt"), 1000, true);
-        setLocalizedStatus(nodes.parseStatus, "copyPromptFailed", {}, true);
+        setLocalizedStatus(nodes.promptStatus, "copyPromptFailed", {}, true);
       }
+    }
+
+    function agendaItemById(itemId) {
+      const index = findAgendaIndexById(itemId);
+      return index >= 0 ? { item: state.agenda[index], index } : null;
+    }
+
+    function refreshDraftFromAgenda() {
+      draftAgenda = clone(state.agenda);
+      if (state.view === "settings") renderDraftTable();
+    }
+
+    function recomputeRecordForAgendaItem(record, item, index) {
+      if (record.type === "agenda") {
+        const actualSec = Math.round(numberOr(record.actualSec, 0));
+        const plannedSec = Math.round(item.redAtSec);
+        const deltaSec = actualSec - plannedSec;
+        const valid = actualSec >= item.validMinSec && actualSec <= item.validMaxSec;
+        const validReason = actualSec < item.validMinSec ? "too_short" : actualSec > item.validMaxSec ? "too_long" : "valid";
+        return {
+          ...record,
+          itemId: item.id,
+          sourceIndex: index,
+          title: item.title,
+          description: item.description,
+          plannedSec,
+          deltaSec,
+          valid,
+          validReason,
+          status: validReason
+        };
+      }
+      if (record.type === "child") {
+        return {
+          ...record,
+          parentItemId: item.id,
+          parentSourceIndex: index,
+          sourceIndex: index,
+          parentTitle: item.title
+        };
+      }
+      return record;
+    }
+
+    function updateRecordsForAgendaItem(item, index) {
+      state.records = state.records.map((record) => (
+        recordMatchesAgendaItem(record, item, index) ? recomputeRecordForAgendaItem(record, item, index) : record
+      ));
+    }
+
+    function commitAgendaMutation() {
+      syncRuntimeAgendaRefs();
+      refreshDraftFromAgenda();
+      saveData();
+      render();
+    }
+
+    function defaultAgendaInsertIndex() {
+      if (state.active?.type === "agenda") {
+        const index = findAgendaIndexForFocus(state.active);
+        if (index >= 0) return index + 1;
+      }
+      return Math.min(state.agenda.length, Math.max(0, Math.round(numberOr(state.nextAgendaIndex, state.agenda.length))));
+    }
+
+    function closeAgendaContextMenu() {
+      agendaContextItemId = "";
+      nodes.agendaContextMenu.hidden = true;
+    }
+
+    function openAgendaContextMenu(event, row) {
+      const itemId = row.dataset.agendaId;
+      if (!itemId) return;
+      agendaContextItemId = itemId;
+      nodes.agendaContextMenu.hidden = false;
+      const rect = nodes.agendaContextMenu.getBoundingClientRect();
+      const left = clamp(event.clientX, 8, window.innerWidth - rect.width - 8);
+      const top = clamp(event.clientY, 8, window.innerHeight - rect.height - 8);
+      nodes.agendaContextMenu.style.left = `${left}px`;
+      nodes.agendaContextMenu.style.top = `${top}px`;
+    }
+
+    function openAgendaEditor(itemId = "", options = {}) {
+      closeAgendaContextMenu();
+      const found = itemId ? agendaItemById(itemId) : null;
+      const insertIndex = options.insertIndex ?? defaultAgendaInsertIndex();
+      const item = found?.item;
+      agendaEditState = {
+        itemId: item?.id || "",
+        insertIndex,
+        mode: item ? "edit" : "insert"
+      };
+      nodes.agendaEditorTitle.textContent = item ? t("editAgendaItem") : t("addAgendaItem");
+      nodes.agendaEditTitle.value = item?.title || t("segmentFallback", { number: state.agenda.length + 1 });
+      nodes.agendaEditDuration.value = formatInputTime(item?.redAtSec || 300, "minutes");
+      nodes.agendaEditor.hidden = false;
+      requestAnimationFrame(() => nodes.agendaEditTitle.focus({ preventScroll: true }));
+    }
+
+    function closeAgendaEditor() {
+      agendaEditState = null;
+      nodes.agendaEditor.hidden = true;
+    }
+
+    function saveAgendaEditor() {
+      if (!agendaEditState) return;
+      const title = normalizeText(nodes.agendaEditTitle.value) || t("untitledSegment");
+      const durationSec = parseDuration(nodes.agendaEditDuration.value, "minutes");
+      if (!durationSec || durationSec <= 0) {
+        nodes.agendaEditDuration.focus();
+        return;
+      }
+      const defaults = autoRule(durationSec);
+      if (agendaEditState.mode === "edit") {
+        const found = agendaItemById(agendaEditState.itemId);
+        if (!found) {
+          closeAgendaEditor();
+          return;
+        }
+        const nextItem = sanitizeAgendaItem({
+          ...found.item,
+          title,
+          durationSec,
+          greenAtSec: defaults.greenAtSec,
+          yellowAtSec: defaults.yellowAtSec,
+          redAtSec: defaults.redAtSec,
+          validMinSec: defaults.validMinSec,
+          validMaxSec: defaults.validMaxSec
+        }, title);
+        state.agenda[found.index] = nextItem;
+        updateRecordsForAgendaItem(nextItem, found.index);
+      } else {
+        const insertIndex = clamp(Math.round(numberOr(agendaEditState.insertIndex, state.agenda.length)), 0, state.agenda.length);
+        const nextItem = sanitizeAgendaItem({
+          title,
+          description: "",
+          durationSec,
+          greenAtSec: defaults.greenAtSec,
+          yellowAtSec: defaults.yellowAtSec,
+          redAtSec: defaults.redAtSec,
+          dingAfterSec: 30,
+          validMinSec: defaults.validMinSec,
+          validMaxSec: defaults.validMaxSec,
+          childTemplates: []
+        }, title);
+        state.agenda.splice(insertIndex, 0, nextItem);
+      }
+      closeAgendaEditor();
+      commitAgendaMutation();
+    }
+
+    function deleteAgendaItem(itemId) {
+      const found = agendaItemById(itemId);
+      if (!found) return;
+      const activeId = state.active?.type === "agenda" ? normalizeAgendaId(state.active.itemId || state.active.item?.id) : "";
+      if (activeId && activeId === found.item.id) {
+        window.alert(t("deleteActiveAgendaDenied"));
+        return;
+      }
+      if (!window.confirm(t("confirmDeleteAgendaItem", { title: found.item.title }))) return;
+      state.records = state.records.filter((record) => !recordMatchesAgendaItem(record, found.item, found.index));
+      state.agenda.splice(found.index, 1);
+      state.expandedItems.delete(`agenda-${found.item.id}`);
+      if (state.nextAgendaIndex > found.index) state.nextAgendaIndex -= 1;
+      commitAgendaMutation();
+    }
+
+    function addAgendaItemDuringRun() {
+      openAgendaEditor("", { insertIndex: defaultAgendaInsertIndex() });
+    }
+
+    function clearAgendaDropClasses() {
+      nodes.agendaList.querySelectorAll(".drop-before, .drop-after, .drag-ready, .dragging").forEach((node) => {
+        node.classList.remove("drop-before", "drop-after", "drag-ready", "dragging");
+      });
+    }
+
+    function startAgendaDrag(row) {
+      const itemId = row.dataset.agendaId;
+      if (!itemId) return;
+      suppressAgendaClick = true;
+      agendaDrag = {
+        itemId,
+        targetId: "",
+        placement: "after",
+        row
+      };
+      row.classList.add("dragging");
+    }
+
+    function updateAgendaDrag(event) {
+      if (!agendaDrag) return;
+      event.preventDefault();
+      const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".agenda-item[data-agenda-id]");
+      clearAgendaDropClasses();
+      agendaDrag.row.classList.add("dragging");
+      if (!target || !target.dataset.agendaId || target.dataset.agendaId === agendaDrag.itemId) {
+        agendaDrag.targetId = "";
+        return;
+      }
+      const rect = target.getBoundingClientRect();
+      const placement = event.clientY < rect.top + rect.height / 2 ? "before" : "after";
+      target.classList.add(placement === "before" ? "drop-before" : "drop-after");
+      agendaDrag.targetId = target.dataset.agendaId;
+      agendaDrag.placement = placement;
+    }
+
+    function moveAgendaItem(itemId, targetId, placement) {
+      const fromIndex = findAgendaIndexById(itemId);
+      const initialTargetIndex = findAgendaIndexById(targetId);
+      if (fromIndex < 0 || initialTargetIndex < 0 || fromIndex === initialTargetIndex) return;
+      const [item] = state.agenda.splice(fromIndex, 1);
+      const targetIndex = findAgendaIndexById(targetId);
+      if (targetIndex < 0) {
+        state.agenda.splice(fromIndex, 0, item);
+        return;
+      }
+      const insertIndex = clamp(placement === "after" ? targetIndex + 1 : targetIndex, 0, state.agenda.length);
+      state.agenda.splice(insertIndex, 0, item);
+      commitAgendaMutation();
+    }
+
+    function finishAgendaDrag() {
+      if (!agendaDrag) return;
+      const { itemId, targetId, placement } = agendaDrag;
+      agendaDrag = null;
+      clearAgendaDropClasses();
+      if (targetId) moveAgendaItem(itemId, targetId, placement);
+      window.setTimeout(() => {
+        suppressAgendaClick = false;
+      }, 0);
+    }
+
+    function cancelAgendaLongPress() {
+      if (agendaLongPressTimer) {
+        window.clearTimeout(agendaLongPressTimer);
+        agendaLongPressTimer = null;
+      }
+    }
+
+    function handleAgendaPointerDown(event) {
+      if (event.button && event.button !== 0) return;
+      const row = event.target.closest(".agenda-item[data-agenda-id]");
+      if (!row || row.dataset.type !== "agenda") return;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      row.classList.add("drag-ready");
+      cancelAgendaLongPress();
+      agendaLongPressTimer = window.setTimeout(() => {
+        agendaLongPressTimer = null;
+        startAgendaDrag(row);
+      }, 420);
+
+      const onMove = (moveEvent) => {
+        const moved = Math.hypot(moveEvent.clientX - startX, moveEvent.clientY - startY);
+        if (!agendaDrag && moved > 10) {
+          cancelAgendaLongPress();
+          row.classList.remove("drag-ready");
+          return;
+        }
+        updateAgendaDrag(moveEvent);
+      };
+      const onUp = () => {
+        cancelAgendaLongPress();
+        row.classList.remove("drag-ready");
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onUp);
+        window.removeEventListener("pointercancel", onUp);
+        finishAgendaDrag();
+      };
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
     }
 
     function handleKeyboard(event) {
@@ -6303,8 +7532,24 @@ Then produce:
 
     nodes.parseAgenda.addEventListener("click", handleParseAgenda);
     nodes.copyPrompt.addEventListener("click", copyCurrentPrompt);
+    nodes.nextToPaste.addEventListener("click", () => setImportStep(2));
+    nodes.nextToPasteStep.addEventListener("click", () => setImportStep(2));
+    nodes.backToPrompt.addEventListener("click", () => setImportStep(1));
+    nodes.nextToPreview.addEventListener("click", () => handleParseAgenda({ advance: true }));
+    nodes.backToPaste.addEventListener("click", () => setImportStep(2));
+    nodes.stepPills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        const step = Number(pill.dataset.stepPill);
+        if (step < state.importStep) setImportStep(step);
+      });
+    });
+    nodes.returnToTimer.addEventListener("click", () => switchView("timer", { autoStart: false }));
     nodes.agendaInput.addEventListener("keydown", insertAgendaTab);
-    nodes.agendaInput.addEventListener("input", updateAgendaTabSize);
+    nodes.agendaInput.addEventListener("input", () => {
+      state.draftInput = nodes.agendaInput.value;
+      updateAgendaTabSize();
+      saveData();
+    });
     nodes.agendaInput.addEventListener("blur", () => alignAgendaInputColumns());
     nodes.agendaInput.addEventListener("paste", () => setTimeout(() => alignAgendaInputColumns(), 0));
     nodes.loadExample.addEventListener("click", () => {
@@ -6313,7 +7558,7 @@ Then produce:
       nodes.meetingNameInput.value = exampleName;
       nodes.agendaInput.value = sampleText(state.pasteMode);
       alignAgendaInputColumns();
-      handleParseAgenda();
+      handleParseAgenda({ advance: state.importStep === 2 });
       saveData();
       renderTimer();
     });
@@ -6326,7 +7571,7 @@ Then produce:
       input.addEventListener("change", () => {
         const previousSample = sampleText(state.pasteMode);
         state.pasteMode = input.value;
-        if (!nodes.agendaInput.value.trim() || compactAgendaTextForCompare(nodes.agendaInput.value) === compactAgendaTextForCompare(previousSample)) {
+        if (state.importStep > 1 && (!nodes.agendaInput.value.trim() || compactAgendaTextForCompare(nodes.agendaInput.value) === compactAgendaTextForCompare(previousSample))) {
           nodes.agendaInput.value = sampleText(state.pasteMode);
           alignAgendaInputColumns();
           handleParseAgenda();
@@ -6337,16 +7582,22 @@ Then produce:
     });
     nodes.clearDraft.addEventListener("click", () => {
       nodes.agendaInput.value = "";
+      state.draftInput = "";
       alignAgendaInputColumns();
       draftAgenda = [];
       renderDraftTable();
       setStatus(nodes.parseStatus, "");
       setStatus(nodes.saveStatus, "");
+      saveData();
     });
     nodes.addRow.addEventListener("click", () => {
+      if (state.active) {
+        setLocalizedStatus(nodes.saveStatus, "agendaRowsLockedDuringRun", {}, true);
+        return;
+      }
       syncDraftFromTable();
       const defaults = autoRule(300);
-      draftAgenda.push(sanitizeItem({
+      draftAgenda.push(sanitizeAgendaItem({
         title: t("segmentFallback", { number: draftAgenda.length + 1 }),
         description: "",
         durationSec: defaults.durationSec,
@@ -6357,25 +7608,35 @@ Then produce:
         childTemplates: []
       }, t("segmentFallback", { number: draftAgenda.length + 1 })));
       renderDraftTable();
+      saveData();
     });
-    nodes.agendaTableBody.addEventListener("input", syncDraftFromTable);
+    nodes.agendaTableBody.addEventListener("input", () => {
+      syncDraftFromTable();
+      saveData();
+    });
     nodes.agendaTableBody.addEventListener("click", (event) => {
       if (!event.target.classList.contains("delete-row")) return;
+      if (state.active) {
+        setLocalizedStatus(nodes.saveStatus, "agendaRowsLockedDuringRun", {}, true);
+        return;
+      }
       const row = event.target.closest("tr");
       const index = [...nodes.agendaTableBody.children].indexOf(row);
       syncDraftFromTable();
       draftAgenda.splice(index, 1);
       renderDraftTable();
+      saveData();
     });
     nodes.saveOnly.addEventListener("click", saveDraftToState);
     nodes.saveAgenda.addEventListener("click", () => {
       if (!saveDraftToState()) return;
-      startRunFromAgenda();
-      switchView("timer");
+      if (!state.active) startRunFromAgenda();
+      switchView("timer", { autoStart: false });
     });
     nodes.settingsBtn.addEventListener("click", () => {
       draftAgenda = clone(state.agenda);
       renderDraftTable();
+      setImportStep(state.agenda.length ? 3 : 1, { persist: false });
       switchView("settings");
     });
     nodes.sideToggle.addEventListener("click", () => {
@@ -6397,6 +7658,7 @@ Then produce:
     nodes.toggleMute.addEventListener("click", toggleMute);
     nodes.toggleTimeDisplay.addEventListener("click", toggleTimeDisplay);
     nodes.fullscreenBtn.addEventListener("click", toggleFullscreen);
+    nodes.addAgendaDuringRun.addEventListener("click", addAgendaItemDuringRun);
     nodes.downloadCsv.addEventListener("click", downloadCsvResults);
     nodes.downloadReport.addEventListener("click", downloadCsvResults);
     nodes.copyReportPrompt.addEventListener("click", () => copyReportSummaryPrompt(nodes.copyReportPrompt));
@@ -6411,13 +7673,16 @@ Then produce:
       const title = nodes.activeTitleInput.value || t("untitledSegment");
       if (state.activeChild) {
         state.activeChild.item.title = title;
-      } else if (state.active.type === "agenda" && state.active.sourceIndex != null && state.agenda[state.active.sourceIndex]) {
+      } else if (state.active.type === "agenda") {
+        const index = findAgendaIndexForFocus(state.active);
+        if (index < 0) return;
         state.active.item.title = title;
-        state.agenda[state.active.sourceIndex].title = state.active.item.title;
+        state.agenda[index].title = state.active.item.title;
         saveData();
       } else if (state.active.type === "temp") {
         state.active.item.title = title;
       }
+      saveData();
       renderTimer();
       renderLists();
     });
@@ -6438,17 +7703,56 @@ Then produce:
         closeLanguageMenus();
       });
     });
-    document.addEventListener("click", () => closeLanguageMenus());
+    nodes.agendaContextMenu.addEventListener("click", (event) => {
+      const action = event.target.closest("[data-agenda-menu-action]")?.dataset.agendaMenuAction;
+      if (!action || !agendaContextItemId) return;
+      const itemId = agendaContextItemId;
+      closeAgendaContextMenu();
+      if (action === "edit") openAgendaEditor(itemId);
+      if (action === "delete") deleteAgendaItem(itemId);
+    });
+    nodes.agendaEditCancel.addEventListener("click", closeAgendaEditor);
+    nodes.agendaEditSave.addEventListener("click", saveAgendaEditor);
+    nodes.agendaEditor.addEventListener("click", (event) => {
+      if (event.target === nodes.agendaEditor) closeAgendaEditor();
+    });
+    nodes.agendaEditDuration.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") saveAgendaEditor();
+    });
+    nodes.agendaEditTitle.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") saveAgendaEditor();
+    });
+    document.addEventListener("click", (event) => {
+      closeLanguageMenus();
+      if (!event.target.closest(".agenda-context-menu")) closeAgendaContextMenu();
+    });
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeLanguageMenus();
+      if (event.key === "Escape") {
+        closeLanguageMenus();
+        closeAgendaContextMenu();
+        if (!nodes.agendaEditor.hidden) closeAgendaEditor();
+      }
+    });
+    nodes.agendaList.addEventListener("pointerdown", handleAgendaPointerDown);
+    nodes.agendaList.addEventListener("contextmenu", (event) => {
+      const row = event.target.closest(".agenda-item[data-agenda-id]");
+      if (!row || row.dataset.type !== "agenda") return;
+      event.preventDefault();
+      openAgendaContextMenu(event, row);
     });
     nodes.agendaList.addEventListener("click", (event) => {
+      if (suppressAgendaClick) {
+        event.preventDefault();
+        suppressAgendaClick = false;
+        return;
+      }
       const row = event.target.closest(".agenda-item");
       if (!row) return;
       const key = row.dataset.key;
       if (!key) return;
       if (state.expandedItems.has(key)) state.expandedItems.delete(key);
       else state.expandedItems.add(key);
+      saveData();
       renderLists();
     });
     window.addEventListener("resize", applyPreviewColumnWidths);
@@ -6468,7 +7772,9 @@ Then produce:
     nodes.pasteModeInputs.forEach((input) => {
       input.checked = input.value === state.pasteMode;
     });
-    if (!draftAgenda.length) {
+    if (state.draftInput) {
+      nodes.agendaInput.value = state.draftInput;
+    } else if (!draftAgenda.length) {
       nodes.agendaInput.value = "";
     } else {
       nodes.agendaInput.value = [
@@ -6487,13 +7793,21 @@ Then produce:
     }
     alignAgendaInputColumns();
     renderDraftTable();
-    if (state.agenda.length) {
+    setImportStep(state.importStep, { persist: false });
+    if (state.active || state.records.length) {
+      switchView("timer", { autoStart: false });
+    } else if (state.agenda.length) {
       switchView("timer");
     } else {
       render();
     }
     rafId = requestAnimationFrame(tick);
+    window.addEventListener("pagehide", saveData);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") saveData();
+    });
     window.addEventListener("beforeunload", () => {
+      saveData();
       if (rafId) cancelAnimationFrame(rafId);
     });
   </script>

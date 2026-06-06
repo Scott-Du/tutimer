@@ -1,4 +1,4 @@
-const CACHE_NAME = "tukuai-timer-v20260507-3";
+const CACHE_NAME = "tukuai-timer-v20260606-2";
 const SCOPE_URL = new URL(self.registration.scope);
 const TIMER_PAGE_URL = new URL("index.html", SCOPE_URL).toString();
 const APP_ROOT_PATH = SCOPE_URL.pathname;
@@ -16,7 +16,8 @@ const OPTIONAL_URLS = [
   "assets/icon-512.png",
   "assets/icon-maskable-192.png",
   "assets/icon-maskable-512.png",
-  "assets/apple-touch-icon.png"
+  "assets/apple-touch-icon.png",
+  "assets/deepseek-agenda-import-example.png"
 ].map((url) => new URL(url, SCOPE_URL).toString());
 const NAVIGATION_PATHS = new Set([
   APP_ROOT_PATH,
