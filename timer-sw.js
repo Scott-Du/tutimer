@@ -1,4 +1,4 @@
-const CACHE_NAME = "tukuai-timer-v20260606-4";
+const CACHE_NAME = "tukuai-timer-v20260607-4";
 const SCOPE_URL = new URL(self.registration.scope);
 const TIMER_PAGE_URL = new URL("index.html", SCOPE_URL).toString();
 const APP_ROOT_PATH = SCOPE_URL.pathname;

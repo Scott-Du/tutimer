@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=20260507-3">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=20260507-3">
-  <link rel="manifest" href="timer-manifest.webmanifest?v=20260606-4">
+  <link rel="manifest" href="timer-manifest.webmanifest?v=20260607-4">
   <style>
     :root {
       --bg: #f5f5f7;
@@ -3940,7 +3940,7 @@
               </div>
               <div class="button-row">
                 <button id="saveAgenda" class="btn primary" type="button" data-i18n="saveAgenda">保存并开始计时</button>
-                <button id="saveOnly" class="btn" type="button" data-i18n="saveOnly">保存</button>
+                <button id="saveReturnTimer" class="btn" type="button" data-i18n="saveAndReturnTimer">保存并返回计时</button>
               </div>
               <div id="saveStatus" class="status-line" role="status"></div>
             </section>
@@ -4364,7 +4364,7 @@ Rules:
 4. Red time usually equals the planned total duration.
 5. For durations longer than 3 minutes, default green time to 2 minutes before red and yellow time to 1 minute before red.
 6. For durations of 3 minutes or less, default green time to 1 minute before red and yellow time to 30 seconds before red.
-7. Bell is the number of seconds after red time before the bell rings; use 30 by default.
+7. Bell is the number of seconds after the planned total duration before the bell rings; use 30 by default.
 8. Child templates are optional, for example: Think 00:30; Impromptu speech 2.
 9. If there are no child segments, leave the last column blank.
 
@@ -4505,7 +4505,7 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         ruleGreen: "绿牌时间 {time}",
         ruleYellow: "黄牌时间 {time}",
         ruleRed: "红牌时间 {time}",
-        ruleBell: "铃声 +{seconds}s",
+        ruleBell: "总时长 +{seconds}s 响铃",
         meetingComplete: "会议已完成",
         tempPositive: "临时环节 · 正计时",
         validWindow: "有效窗口 {min} - {max}",
@@ -4686,7 +4686,7 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         ruleGreen: "Green time {time}",
         ruleYellow: "Yellow time {time}",
         ruleRed: "Red time {time}",
-        ruleBell: "Bell +{seconds}s",
+        ruleBell: "Duration +{seconds}s bell",
         meetingComplete: "Meeting complete",
         tempPositive: "Temporary segment · count up",
         validWindow: "Valid window {min} - {max}",
@@ -4928,7 +4928,7 @@ Then produce:
       agendaTableBody: document.getElementById("agendaTableBody"),
       addRow: document.getElementById("addRow"),
       saveAgenda: document.getElementById("saveAgenda"),
-      saveOnly: document.getElementById("saveOnly"),
+      saveReturnTimer: document.getElementById("saveReturnTimer"),
       saveStatus: document.getElementById("saveStatus"),
       headerMeetingName: document.getElementById("headerMeetingName"),
       settingsBtn: document.getElementById("settingsBtn"),
@@ -5188,35 +5188,44 @@ Then produce:
     }
 
     function autoRule(durationSec) {
-      const redAtSec = Math.max(1, Math.round(durationSec));
-      const greenAtSec = redAtSec > 180 ? Math.max(0, redAtSec - 120) : Math.max(0, redAtSec - 60);
-      const yellowAtSec = redAtSec > 180 ? Math.max(greenAtSec, redAtSec - 60) : Math.max(greenAtSec, redAtSec - 30);
+      const plannedSec = Math.max(1, Math.round(durationSec));
+      const redAtSec = plannedSec;
+      const greenAtSec = plannedSec > 180 ? Math.max(0, plannedSec - 120) : Math.max(0, plannedSec - 60);
+      const yellowAtSec = plannedSec > 180 ? Math.max(greenAtSec, plannedSec - 60) : Math.max(greenAtSec, plannedSec - 30);
       return {
-        durationSec: redAtSec,
+        durationSec: plannedSec,
         greenAtSec,
         yellowAtSec,
         redAtSec,
         dingAfterSec: 30,
         validMinSec: greenAtSec,
-        validMaxSec: redAtSec + 30
+        validMaxSec: plannedSec + 30
       };
+    }
+
+    function plannedDurationSec(item) {
+      return Math.max(1, Math.round(numberOr(item?.durationSec ?? item?.redAtSec, 0)));
+    }
+
+    function dingAtSec(item) {
+      return plannedDurationSec(item) + Math.max(0, Math.round(numberOr(item?.dingAfterSec, 30)));
     }
 
     function sanitizeChildTemplate(template, fallbackTitle) {
       const durationSec = Math.max(1, Math.round(numberOr(template.durationSec ?? template.redAtSec, 120)));
       const defaults = autoRule(durationSec);
-      const redAtSec = Math.max(1, Math.round(numberOr(template.redAtSec, defaults.redAtSec)));
-      const greenAtSec = Math.max(0, Math.round(numberOr(template.greenAtSec, defaults.greenAtSec)));
-      const yellowAtSec = Math.max(greenAtSec, Math.round(numberOr(template.yellowAtSec, defaults.yellowAtSec)));
+      const redAtSec = Math.min(durationSec, Math.max(1, Math.round(numberOr(template.redAtSec, defaults.redAtSec))));
+      const greenAtSec = Math.min(redAtSec, Math.max(0, Math.round(numberOr(template.greenAtSec, defaults.greenAtSec))));
+      const yellowAtSec = Math.min(redAtSec, Math.max(greenAtSec, Math.round(numberOr(template.yellowAtSec, defaults.yellowAtSec))));
       const dingAfterSec = Math.max(0, Math.round(numberOr(template.dingAfterSec, defaults.dingAfterSec)));
-      const validMinSec = Math.max(0, Math.round(numberOr(template.validMinSec, Math.min(greenAtSec, redAtSec))));
-      const validMaxSec = Math.max(validMinSec, Math.round(numberOr(template.validMaxSec, redAtSec + 30)));
+      const validMinSec = Math.max(0, Math.min(durationSec, greenAtSec));
+      const validMaxSec = Math.max(validMinSec, durationSec + dingAfterSec);
       return {
         title: normalizeText(template.title) || fallbackTitle,
         description: normalizeText(template.description),
-        durationSec: redAtSec,
-        greenAtSec: Math.min(greenAtSec, redAtSec),
-        yellowAtSec: Math.min(yellowAtSec, redAtSec),
+        durationSec,
+        greenAtSec,
+        yellowAtSec,
         redAtSec,
         dingAfterSec,
         validMinSec,
@@ -5229,7 +5238,7 @@ Then produce:
       if (Array.isArray(value)) {
         return value
           .map((template, index) => sanitizeChildTemplate(template, t("childFallback", { number: index + 1 })))
-          .filter((template) => template.title && template.redAtSec > 0);
+          .filter((template) => template.title && template.durationSec > 0);
       }
 
       return String(value || "")
@@ -5252,12 +5261,12 @@ Then produce:
             dingAfterSec: 30
           }, t("childFallback", { number: index + 1 }));
         })
-        .filter((template) => template.title && template.redAtSec > 0);
+        .filter((template) => template.title && template.durationSec > 0);
     }
 
     function formatChildTemplates(templates) {
       return (templates || [])
-        .map((template) => `${template.title} ${formatInputTime(template.redAtSec, "minutes")}`)
+        .map((template) => `${template.title} ${formatInputTime(template.durationSec, "minutes")}`)
         .join("; ");
     }
 
@@ -5271,20 +5280,20 @@ Then produce:
     }
 
     function sanitizeItem(item, fallbackTitle) {
-      const durationSec = Math.max(1, Math.round(numberOr(item.durationSec, 0)));
+      const durationSec = Math.max(1, Math.round(numberOr(item.durationSec ?? item.redAtSec, 0)));
       const defaults = autoRule(durationSec);
-      const redAtSec = Math.max(1, Math.round(numberOr(item.redAtSec, defaults.redAtSec)));
-      const greenAtSec = Math.max(0, Math.round(numberOr(item.greenAtSec, defaults.greenAtSec)));
-      const yellowAtSec = Math.max(greenAtSec, Math.round(numberOr(item.yellowAtSec, defaults.yellowAtSec)));
+      const redAtSec = Math.min(durationSec, Math.max(1, Math.round(numberOr(item.redAtSec, defaults.redAtSec))));
+      const greenAtSec = Math.min(redAtSec, Math.max(0, Math.round(numberOr(item.greenAtSec, defaults.greenAtSec))));
+      const yellowAtSec = Math.min(redAtSec, Math.max(greenAtSec, Math.round(numberOr(item.yellowAtSec, defaults.yellowAtSec))));
       const dingAfterSec = Math.max(0, Math.round(numberOr(item.dingAfterSec, defaults.dingAfterSec)));
-      const validMinSec = Math.max(0, Math.round(numberOr(item.validMinSec, Math.min(greenAtSec, redAtSec))));
-      const validMaxSec = Math.max(validMinSec, Math.round(numberOr(item.validMaxSec, redAtSec + 30)));
+      const validMinSec = Math.max(0, Math.min(durationSec, greenAtSec));
+      const validMaxSec = Math.max(validMinSec, durationSec + dingAfterSec);
       return {
         title: normalizeText(item.title) || fallbackTitle,
         description: normalizeText(item.description),
         durationSec,
-        greenAtSec: Math.min(greenAtSec, redAtSec),
-        yellowAtSec: Math.min(yellowAtSec, redAtSec),
+        greenAtSec,
+        yellowAtSec,
         redAtSec,
         dingAfterSec,
         validMinSec,
@@ -5359,6 +5368,13 @@ Then produce:
       state.nextAgendaIndex = Math.min(state.agenda.length, Math.max(0, Math.round(numberOr(state.nextAgendaIndex, 0))));
     }
 
+    function canAdvanceCurrentLayer() {
+      if (state.activeChild) return true;
+      if (!state.active) return false;
+      if (state.active.type === "temp") return state.nextAgendaIndex < state.agenda.length;
+      return state.active.type === "agenda";
+    }
+
     function splitLine(line) {
       if (line.includes("\t")) return line.split("\t");
       const trimmed = line.trim();
@@ -5424,7 +5440,8 @@ Then produce:
         const description = cells[map.description] || "";
         const duration = parseDuration(cells[map.duration ?? 1], "minutes");
         const red = parseDuration(cells[map.red], "minutes");
-        const redAtSec = red || duration || 300;
+        const durationSec = duration || red || 300;
+        const redAtSec = red || durationSec;
         const yellow = parseDuration(cells[map.yellow], "minutes");
         const green = parseDuration(cells[map.green], "minutes");
         const ding = parseDuration(cells[map.ding], "seconds");
@@ -5434,20 +5451,26 @@ Then produce:
         return sanitizeAgendaItem({
           title,
           description,
-          durationSec: duration || redAtSec,
+          durationSec,
           greenAtSec: useFullRule && green != null ? green : defaults.greenAtSec,
           yellowAtSec: useFullRule && yellow != null ? yellow : defaults.yellowAtSec,
           redAtSec,
           dingAfterSec: ding ?? 30,
           childTemplates
         }, t("segmentFallback", { number: index + 1 }));
-      }).filter((item) => item.title && item.redAtSec > 0);
+      }).filter((item) => item.title && item.durationSec > 0);
     }
 
     function draftRowFromInputs(row) {
       const inputs = row.querySelectorAll("input");
       const itemId = row.dataset.itemId || "";
       const previousItem = state.agenda.find((item) => item.id === itemId);
+      const baseline = previousItem || {
+        durationSec: numberOr(row.dataset.initialDurationSec, null),
+        greenAtSec: numberOr(row.dataset.initialGreenAtSec, null),
+        yellowAtSec: numberOr(row.dataset.initialYellowAtSec, null),
+        redAtSec: numberOr(row.dataset.initialRedAtSec, null)
+      };
       const title = inputs[0].value;
       const description = inputs[1].value;
       const durationSec = parseDuration(inputs[2].value, "minutes") || 300;
@@ -5456,12 +5479,13 @@ Then produce:
       let redAtSec = parseDuration(inputs[5].value, "minutes") || durationSec;
       const dingAfterSec = parseDuration(inputs[6].value, "seconds");
       const childTemplates = parseChildTemplates(inputs[7]?.value || "");
-      const durationChanged = previousItem && durationSec !== previousItem.durationSec;
-      const redChanged = previousItem && redAtSec !== previousItem.redAtSec;
-      if (durationChanged && !redChanged) redAtSec = durationSec;
+      const durationChanged = baseline && durationSec !== baseline.durationSec;
+      const redChanged = baseline && redAtSec !== baseline.redAtSec;
+      const redFollowsDuration = baseline && baseline.redAtSec === baseline.durationSec;
+      if (durationChanged && !redChanged && redFollowsDuration) redAtSec = durationSec;
       const defaults = autoRule(redAtSec);
-      const greenChanged = previousItem && greenAtSec !== previousItem.greenAtSec;
-      const yellowChanged = previousItem && yellowAtSec !== previousItem.yellowAtSec;
+      const greenChanged = baseline && greenAtSec !== baseline.greenAtSec;
+      const yellowChanged = baseline && yellowAtSec !== baseline.yellowAtSec;
       if ((durationChanged || redChanged) && !greenChanged) greenAtSec = defaults.greenAtSec;
       if ((durationChanged || redChanged) && !yellowChanged) yellowAtSec = defaults.yellowAtSec;
       return sanitizeAgendaItem({
@@ -5480,6 +5504,36 @@ Then produce:
     function syncDraftFromTable() {
       const rows = [...nodes.agendaTableBody.querySelectorAll("tr")];
       draftAgenda = rows.map(draftRowFromInputs);
+    }
+
+    function draftRowInitialRule(row) {
+      return {
+        durationSec: numberOr(row.dataset.initialDurationSec, null),
+        greenAtSec: numberOr(row.dataset.initialGreenAtSec, null),
+        yellowAtSec: numberOr(row.dataset.initialYellowAtSec, null),
+        redAtSec: numberOr(row.dataset.initialRedAtSec, null)
+      };
+    }
+
+    function updateDraftRowAutoRules(row, changedInput) {
+      const inputs = [...row.querySelectorAll("input")];
+      const changedIndex = inputs.indexOf(changedInput);
+      if (![2, 5].includes(changedIndex)) return;
+      const initial = draftRowInitialRule(row);
+      const durationSec = parseDuration(inputs[2]?.value, "minutes");
+      const currentRedAtSec = parseDuration(inputs[5]?.value, "minutes");
+      if (!durationSec || durationSec <= 0) return;
+      const redWasUnedited = currentRedAtSec === initial.redAtSec;
+      const redFollowsDuration = initial.redAtSec === initial.durationSec;
+      const greenWasUnedited = parseDuration(inputs[3]?.value, "minutes") === initial.greenAtSec;
+      const yellowWasUnedited = parseDuration(inputs[4]?.value, "minutes") === initial.yellowAtSec;
+      const nextRedAtSec = changedIndex === 2 && redWasUnedited && redFollowsDuration ? durationSec : currentRedAtSec || durationSec;
+      const nextRule = autoRule(nextRedAtSec);
+      if (changedIndex === 2 && redWasUnedited && redFollowsDuration) {
+        inputs[5].value = formatInputTime(nextRedAtSec, "minutes");
+      }
+      if (greenWasUnedited) inputs[3].value = formatInputTime(nextRule.greenAtSec, "minutes");
+      if (yellowWasUnedited) inputs[4].value = formatInputTime(nextRule.yellowAtSec, "minutes");
     }
 
     function normalizePreviewColumnWidths(widths) {
@@ -5519,6 +5573,10 @@ Then produce:
       draftAgenda.forEach((item, index) => {
         const tr = document.createElement("tr");
         tr.dataset.itemId = item.id || "";
+        tr.dataset.initialDurationSec = String(item.durationSec);
+        tr.dataset.initialGreenAtSec = String(item.greenAtSec);
+        tr.dataset.initialYellowAtSec = String(item.yellowAtSec);
+        tr.dataset.initialRedAtSec = String(item.redAtSec);
         tr.innerHTML = `
           <td><input type="text" value="${escapeAttr(item.title)}" aria-label="${escapeAttr(t("colTitle"))}"></td>
           <td><input type="text" value="${escapeAttr(item.description || "")}" aria-label="${escapeAttr(t("colDescription"))}"></td>
@@ -5700,7 +5758,6 @@ Then produce:
         pill.setAttribute("aria-disabled", String(!canReturn));
       });
       nodes.returnToTimer.hidden = !hasTimerState();
-      nodes.saveAgenda.textContent = state.active ? t("saveAndReturnTimer") : t("saveAgenda");
       if (nodes.addRow) nodes.addRow.disabled = Boolean(state.active);
       if (state.importStep === 3) applyPreviewColumnWidths();
     }
@@ -6089,7 +6146,7 @@ Then produce:
     function finalizeActiveChild() {
       if (!state.activeChild) return;
       const actualSec = Math.round(currentChildElapsedSeconds());
-      const plannedSec = Math.round(state.activeChild.item.redAtSec);
+      const plannedSec = plannedDurationSec(state.activeChild.item);
       const deltaSec = actualSec - plannedSec;
       const valid = actualSec >= state.activeChild.item.validMinSec && actualSec <= state.activeChild.item.validMaxSec;
       const validReason = actualSec < state.activeChild.item.validMinSec ? "too_short" : actualSec > state.activeChild.item.validMaxSec ? "too_long" : "valid";
@@ -6119,7 +6176,7 @@ Then produce:
     function finalizeActive() {
       if (!state.active) return;
       const actualSec = Math.round(currentElapsedSeconds());
-      const plannedSec = Math.round(state.active.item.redAtSec);
+      const plannedSec = plannedDurationSec(state.active.item);
       const isTemp = state.active.type === "temp";
       const deltaSec = isTemp ? null : actualSec - plannedSec;
       const valid = isTemp ? null : actualSec >= state.active.item.validMinSec && actualSec <= state.active.item.validMaxSec;
@@ -6220,7 +6277,7 @@ Then produce:
       if (!state.activeChild && state.active?.type === "temp") {
         nodes.nextAgenda.disabled = state.nextAgendaIndex >= state.agenda.length;
       } else if (!state.activeChild) {
-        nodes.nextAgenda.disabled = !state.active || state.nextAgendaIndex >= state.agenda.length;
+        nodes.nextAgenda.disabled = !canAdvanceCurrentLayer();
       }
       nodes.startPause.disabled = !state.active && state.nextAgendaIndex >= state.agenda.length;
       if (!state.activeChild) nodes.childSegment.disabled = !state.active || state.active.type !== "agenda";
@@ -6255,7 +6312,7 @@ Then produce:
       nodes.signalPanel.classList.toggle("completed", isComplete);
       nodes.startPause.classList.toggle("is-running", isRunning);
       nodes.startPause.setAttribute("aria-label", isRunning ? t("pause") : t("start"));
-      const dingAlert = !isTemp && focus && signal === "red" && elapsed >= item.redAtSec + item.dingAfterSec;
+      const dingAlert = !isTemp && focus && signal === "red" && elapsed >= dingAtSec(item);
       nodes.signalPanel.classList.toggle("ding-alert", Boolean(dingAlert));
       renderRunningIndicator(focus, readyItem);
       renderParentMini();
@@ -6272,7 +6329,7 @@ Then produce:
         nodes.activeTitleInput.value = "";
         setButtonLabelIfIdle(nodes.copyReportPrompt, t("reportPrompt"));
       } else {
-        const remaining = item.redAtSec - elapsed;
+        const remaining = item.durationSec - elapsed;
         nodes.currentTitle.textContent = item.title;
         nodes.currentDescription.textContent = item.description || "";
         nodes.currentDescription.classList.toggle("hidden", !item.description);
@@ -6309,7 +6366,7 @@ Then produce:
       }
       nodes.signalPanel.classList.add("has-parent-mini");
       const elapsed = currentElapsedSeconds();
-      const remaining = state.active.item.redAtSec - elapsed;
+      const remaining = state.active.item.durationSec - elapsed;
       const signal = elapsed === 0 && !state.active.running ? "neutral" : signalState(state.active.item, elapsed);
       nodes.parentMini.className = `parent-mini ${signal}`;
       nodes.parentMiniTitle.textContent = state.active.item.title;
@@ -6367,14 +6424,14 @@ Then produce:
         childStrong.textContent = t("childSegmentShort");
         childHint.textContent = "↓ / S";
         nodes.childSegment.hidden = true;
-        nodes.nextAgenda.disabled = !state.agenda.length || state.nextAgendaIndex >= state.agenda.length;
+        nodes.nextAgenda.disabled = !canAdvanceCurrentLayer();
       } else {
         const hasChildTemplates = state.active?.type === "agenda" && childTemplatesFor(state.active.item).length > 0;
         nextStrong.textContent = t("nextAgenda");
         nextHint.textContent = "→ / N";
         childStrong.textContent = t("enterChild");
         childHint.textContent = "↓ / S";
-        nodes.nextAgenda.disabled = !state.active || state.nextAgendaIndex >= state.agenda.length;
+        nodes.nextAgenda.disabled = !canAdvanceCurrentLayer();
         nodes.childSegment.disabled = !hasChildTemplates;
       }
       nodes.nextAgenda.setAttribute("aria-label", nextStrong.textContent);
@@ -6500,7 +6557,7 @@ Then produce:
     }
 
     function activeToRecord(active, actualSec, type = active.type) {
-      const plannedSec = type === "temp" ? null : Math.round(active.item.redAtSec);
+      const plannedSec = type === "temp" ? null : plannedDurationSec(active.item);
       const deltaSec = plannedSec == null ? null : Math.round(actualSec) - plannedSec;
       return {
         title: active.item.title,
@@ -6593,7 +6650,7 @@ Then produce:
         isTemp ? "temp" : "",
         record?.status || ""
       ].filter(Boolean).join(" ");
-      const planned = isTemp ? t("tempPositive") : formatClock(item.redAtSec);
+      const planned = isTemp ? t("tempPositive") : formatClock(item.durationSec);
       const result = record ? resultHtml(record) : "";
       const description = item.description ? `<div>${escapeHtml(item.description)}</div>` : "";
       const detail = expanded ? `
@@ -6876,7 +6933,7 @@ Then produce:
     function tick() {
       if (state.active && state.active.running && state.active.type !== "temp") {
         const elapsed = currentElapsedSeconds();
-        const dingAt = state.active.item.redAtSec + state.active.item.dingAfterSec;
+        const dingAt = dingAtSec(state.active.item);
         if (!state.active.dinged && elapsed >= dingAt) {
           state.active.dinged = true;
           saveData();
@@ -6885,7 +6942,7 @@ Then produce:
       }
       if (state.activeChild && state.activeChild.running) {
         const elapsed = currentChildElapsedSeconds();
-        const dingAt = state.activeChild.item.redAtSec + state.activeChild.item.dingAfterSec;
+        const dingAt = dingAtSec(state.activeChild.item);
         if (!state.activeChild.dinged && elapsed >= dingAt) {
           state.activeChild.dinged = true;
           saveData();
@@ -7180,7 +7237,7 @@ Then produce:
     function recomputeRecordForAgendaItem(record, item, index) {
       if (record.type === "agenda") {
         const actualSec = Math.round(numberOr(record.actualSec, 0));
-        const plannedSec = Math.round(item.redAtSec);
+        const plannedSec = plannedDurationSec(item);
         const deltaSec = actualSec - plannedSec;
         const valid = actualSec >= item.validMinSec && actualSec <= item.validMaxSec;
         const validReason = actualSec < item.validMinSec ? "too_short" : actualSec > item.validMaxSec ? "too_long" : "valid";
@@ -7358,8 +7415,8 @@ Then produce:
       const dingAfterSec = agendaEditState.mode === "edit"
         ? agendaItemById(agendaEditState.itemId)?.item?.dingAfterSec ?? 30
         : 30;
-      const validMinSec = Math.min(greenAtSec, redAtSec);
-      const validMaxSec = redAtSec + dingAfterSec;
+      const validMinSec = Math.min(greenAtSec, durationSec);
+      const validMaxSec = durationSec + dingAfterSec;
       if (agendaEditState.mode === "edit") {
         const found = agendaItemById(agendaEditState.itemId);
         if (!found) {
@@ -7739,7 +7796,9 @@ Then produce:
       renderDraftTable();
       saveData();
     });
-    nodes.agendaTableBody.addEventListener("input", () => {
+    nodes.agendaTableBody.addEventListener("input", (event) => {
+      const row = event.target.closest("tr");
+      if (row) updateDraftRowAutoRules(row, event.target);
       syncDraftFromTable();
       saveData();
     });
@@ -7756,10 +7815,13 @@ Then produce:
       renderDraftTable();
       saveData();
     });
-    nodes.saveOnly.addEventListener("click", saveDraftToState);
     nodes.saveAgenda.addEventListener("click", () => {
       if (!saveDraftToState()) return;
-      if (!state.active) startRunFromAgenda();
+      startRunFromAgenda();
+      switchView("timer", { autoStart: false });
+    });
+    nodes.saveReturnTimer.addEventListener("click", () => {
+      if (!saveDraftToState()) return;
       switchView("timer", { autoStart: false });
     });
     nodes.settingsBtn.addEventListener("click", () => {
