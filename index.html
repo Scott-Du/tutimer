@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=20260507-3">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=20260507-3">
-  <link rel="manifest" href="timer-manifest.webmanifest?v=20260607-4">
+  <link rel="manifest" href="timer-manifest.webmanifest?v=20260608-1">
   <style>
     :root {
       --bg: #f5f5f7;
@@ -107,9 +107,10 @@
       position: relative;
       z-index: 50;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 10px;
       margin: 0 0 14px;
       padding: 14px;
       background: rgba(255, 255, 255, 0.72);
@@ -137,6 +138,26 @@
       max-height: 116px;
     }
 
+    .settings-header-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .settings-meeting-field {
+      width: min(540px, 100%);
+      margin: 0 auto;
+      display: block;
+      min-width: 0;
+    }
+
+    .settings-meeting-field .settings-input {
+      text-align: center;
+      background: rgba(251, 252, 253, 0.92);
+    }
+
     .language-switch {
       position: relative;
       display: inline-flex;
@@ -149,11 +170,12 @@
     }
 
     .settings-language-switch {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
+      position: relative;
+      right: auto;
+      top: auto;
+      transform: none;
       z-index: 70;
+      justify-self: end;
     }
 
     .settings-language-switch.open {
@@ -161,20 +183,32 @@
     }
 
     .settings-top-actions {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
       z-index: 70;
       display: flex;
       align-items: center;
       gap: 8px;
+      justify-self: start;
     }
 
-    .settings-return-btn {
+    .btn.settings-return-btn {
       min-height: 38px;
       padding: 0 12px;
       font-size: 12px;
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 8px 18px rgba(0, 122, 255, 0.18);
+    }
+
+    .btn.settings-return-btn:hover,
+    .btn.settings-return-btn:focus-visible {
+      background: var(--accent-dark);
+      color: #fff;
+      border-color: transparent;
     }
 
     .language-trigger {
@@ -496,6 +530,27 @@
       border: 1px solid var(--line);
       border-radius: 18px;
       background: #f6f8fa;
+    }
+
+    .example-shot-link {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .example-shot-link:hover .example-shot,
+    .example-shot-link:focus-visible .example-shot {
+      filter: brightness(0.98);
+    }
+
+    .example-shot-link:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.34);
+      outline-offset: -5px;
     }
 
     .example-shot {
@@ -2296,6 +2351,10 @@
         max-height: 72px;
       }
 
+      .settings-header-row {
+        gap: 8px;
+      }
+
       .settings-language-switch {
         position: static;
         transform: none;
@@ -3147,6 +3206,7 @@
         padding: 6px 10px;
         border-radius: 14px;
         flex-direction: row;
+        gap: 8px;
       }
 
       .settings-logo .logo-img {
@@ -3154,15 +3214,32 @@
         max-height: 36px;
       }
 
+      .settings-header-row {
+        flex: 1;
+        gap: 6px;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+      }
+
+      .settings-meeting-field {
+        width: 100%;
+        margin: 0;
+      }
+
+      .settings-meeting-field .settings-input {
+        min-height: 30px;
+        font-size: 11.5px;
+        text-align: left;
+      }
+
       .settings-language-switch {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
       }
 
       .settings-top-actions {
-        left: 10px;
+        left: auto;
       }
 
       .settings-return-btn {
@@ -3814,15 +3891,20 @@
     <section id="settingsView" class="view settings-view active" aria-label="议程设置" data-i18n-aria="settingsAria">
       <div class="settings-shell">
         <div class="settings-logo">
-          <div class="settings-top-actions">
-            <button id="returnToTimer" class="btn settings-return-btn" type="button" data-i18n="returnToTimer">返回计时</button>
-          </div>
           <img class="logo-img" src="assets/logo.png" alt="兔会计时器 logo" data-i18n-alt="logoAlt">
-          <div class="language-switch settings-language-switch" role="group" aria-label="语言" data-i18n-aria="language" data-language-switch>
-            <button class="language-trigger" type="button" aria-haspopup="menu" aria-expanded="false" data-locale-trigger>中文</button>
-            <div class="language-options" role="menu">
-              <button class="lang-option" type="button" role="menuitemradio" data-locale-option="zh-CN">中文</button>
-              <button class="lang-option" type="button" role="menuitemradio" data-locale-option="en">EN</button>
+          <div class="settings-header-row">
+            <div class="settings-top-actions">
+              <button id="returnToTimer" class="btn settings-return-btn" type="button" data-i18n="returnToTimer">返回计时</button>
+            </div>
+            <label class="settings-meeting-field">
+              <input id="meetingNameInput" class="settings-input" type="text" placeholder="本次会议名" aria-label="本次会议名" data-i18n-placeholder="meetingNamePlaceholder" data-i18n-aria="meetingNameLabel">
+            </label>
+            <div class="language-switch settings-language-switch" role="group" aria-label="语言" data-i18n-aria="language" data-language-switch>
+              <button class="language-trigger" type="button" aria-haspopup="menu" aria-expanded="false" data-locale-trigger>中文</button>
+              <div class="language-options" role="menu">
+                <button class="lang-option" type="button" role="menuitemradio" data-locale-option="zh-CN">中文</button>
+                <button class="lang-option" type="button" role="menuitemradio" data-locale-option="en">EN</button>
+              </div>
             </div>
           </div>
         </div>
@@ -3836,11 +3918,7 @@
 
           <section id="promptStep" class="import-step import-step-intro">
             <section class="panel prompt-guide-panel">
-              <h1 class="guide-title" data-i18n="promptStepTitle">提示词和议程一起发给大模型</h1>
-              <label class="field-block">
-                <span class="field-label" data-i18n="meetingNameLabel">本次会议名</span>
-                <input id="meetingNameInput" class="settings-input" type="text" placeholder="例如：周三例会" data-i18n-placeholder="meetingNamePlaceholder">
-              </label>
+              <h1 class="guide-title" data-i18n="promptStepTitle">把提示词和议程发给AI</h1>
               <div class="mode-switch" aria-label="提示词类型" data-i18n-aria="pasteMode">
                 <label class="mode-option" title="不自定义红牌、黄牌、绿牌时间" data-i18n-title="simpleAgendaHint">
                   <input type="radio" name="pasteMode" value="simple" checked>
@@ -3880,7 +3958,9 @@
 
             <section class="panel prompt-example-panel">
               <div class="example-shot-wrap">
-                <img class="example-shot" src="assets/deepseek-agenda-import-example.png" alt="DeepSeek 导入议程示例截图" data-i18n-alt="exampleScreenshotAlt">
+                <a class="example-shot-link" href="https://chat.deepseek.com/" target="_blank" rel="noopener noreferrer" aria-label="打开 DeepSeek" title="打开 DeepSeek" data-i18n-aria="openDeepSeek" data-i18n-title="openDeepSeek">
+                  <img class="example-shot" src="assets/deepseek-agenda-import-example.png" alt="DeepSeek 导入议程示例截图" data-i18n-alt="exampleScreenshotAlt">
+                </a>
               </div>
             </section>
           </section>
@@ -4388,7 +4468,7 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         timerAria: "计时",
         agendaInfo: "议程信息",
         meetingNameLabel: "本次会议名",
-        meetingNamePlaceholder: "例如：周三例会",
+        meetingNamePlaceholder: "本次会议名",
         sampleMeetingName: "方兴知言俱乐部第一次示范会议",
         pasteMode: "提示词类型",
         simpleAgenda: "简版提示词",
@@ -4421,7 +4501,7 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         stepPrompt: "复制提示词",
         stepPaste: "粘贴结果",
         stepPreview: "检查表格",
-        promptStepTitle: "提示词和议程一起发给大模型",
+        promptStepTitle: "把提示词和议程发给AI",
         promptModeNote: "区别：是否需要自定义红牌、黄牌、绿牌的时间。",
         promptStepItem1: "复制提示词",
         promptStepItem2: "把提示词和议程图片、文字或 Excel 表一起发给 AI",
@@ -4569,7 +4649,7 @@ Meeting close\tSummarize the meeting and thank everyone\t1\t0\t00:30\t1\t30\t`
         timerAria: "Timer",
         agendaInfo: "Agenda Info",
         meetingNameLabel: "Meeting name",
-        meetingNamePlaceholder: "Example: Wednesday meeting",
+        meetingNamePlaceholder: "Meeting name",
         sampleMeetingName: "WiseTalk Club First Demo Meeting",
         pasteMode: "Prompt type",
         simpleAgenda: "Simple prompt",
@@ -4991,6 +5071,8 @@ Then produce:
       locale: currentLocale,
       importStep: 1,
       draftInput: "",
+      draftPreviewDirty: false,
+      draftPreviewInputSignature: "",
       meetingName: "",
       pasteMode: "simple",
       agenda: [],
@@ -5743,19 +5825,73 @@ Then produce:
       syncNextAgendaIndex();
     }
 
+    function currentAgendaInputValue() {
+      return nodes.agendaInput?.value ?? state.draftInput ?? "";
+    }
+
+    function draftInputSignature(value = currentAgendaInputValue()) {
+      return compactAgendaTextForCompare(value);
+    }
+
+    function hasDraftPreview() {
+      return Array.isArray(draftAgenda) && draftAgenda.length > 0;
+    }
+
+    function hasDraftInputValue() {
+      return Boolean(draftInputSignature());
+    }
+
+    function markDraftPreviewClean(value = currentAgendaInputValue()) {
+      state.draftPreviewInputSignature = draftInputSignature(value);
+      state.draftPreviewDirty = false;
+    }
+
+    function updateDraftPreviewDirtyFromInput() {
+      if (!hasDraftPreview()) {
+        state.draftPreviewDirty = false;
+        return;
+      }
+      state.draftPreviewDirty = draftInputSignature() !== state.draftPreviewInputSignature;
+    }
+
+    function canEnterImportStep(step) {
+      const normalized = normalizeImportStep(step);
+      return normalized < 3 || (hasDraftPreview() && !state.draftPreviewDirty);
+    }
+
+    function isMeetingCompleted() {
+      return !state.active &&
+        !state.activeChild &&
+        state.agenda.length > 0 &&
+        state.nextAgendaIndex >= state.agenda.length &&
+        state.records.length > 0;
+    }
+
+    function defaultImportStep() {
+      if (isMeetingCompleted()) return 1;
+      if (canEnterImportStep(3)) return 3;
+      if (hasDraftInputValue()) return 2;
+      return 1;
+    }
+
+    function resolveImportStep(step) {
+      const normalized = normalizeImportStep(step);
+      return canEnterImportStep(normalized) ? normalized : defaultImportStep();
+    }
+
     function renderImportControls() {
-      state.importStep = normalizeImportStep(state.importStep);
+      state.importStep = resolveImportStep(state.importStep);
       nodes.promptStep.hidden = state.importStep !== 1;
       nodes.settingsGrid.hidden = state.importStep === 1;
       nodes.settingsGrid.dataset.importStep = String(state.importStep);
       nodes.stepPills.forEach((pill) => {
         const step = Number(pill.dataset.stepPill);
         const isActive = step === state.importStep;
-        const canReturn = step < state.importStep;
+        const canEnter = canEnterImportStep(step);
         pill.classList.toggle("active", isActive);
-        pill.disabled = !canReturn;
+        pill.disabled = !canEnter;
         pill.setAttribute("aria-current", isActive ? "step" : "false");
-        pill.setAttribute("aria-disabled", String(!canReturn));
+        pill.setAttribute("aria-disabled", String(!canEnter));
       });
       nodes.returnToTimer.hidden = !hasTimerState();
       if (nodes.addRow) nodes.addRow.disabled = Boolean(state.active);
@@ -5763,7 +5899,7 @@ Then produce:
     }
 
     function setImportStep(step, options = {}) {
-      state.importStep = normalizeImportStep(step);
+      state.importStep = resolveImportStep(step);
       renderImportControls();
       if (options.persist !== false) saveData();
       if (state.importStep > 1) {
@@ -5780,6 +5916,8 @@ Then produce:
         agenda: state.agenda,
         draftAgenda,
         draftInput: nodes.agendaInput?.value || state.draftInput || "",
+        draftPreviewDirty: state.draftPreviewDirty,
+        draftPreviewInputSignature: state.draftPreviewInputSignature,
         importStep: state.importStep,
         records: state.records,
         active: serializeFocus(state.active, currentElapsedSeconds()),
@@ -5828,9 +5966,18 @@ Then produce:
         state.sideCollapsed = Boolean(data.sideCollapsed);
         state.footerCollapsed = Boolean(data.footerCollapsed);
         state.draftInput = typeof data.draftInput === "string" ? data.draftInput : "";
+        state.draftPreviewDirty = Boolean(data.draftPreviewDirty);
+        state.draftPreviewInputSignature = typeof data.draftPreviewInputSignature === "string" ? data.draftPreviewInputSignature : "";
+        if (!hasDraftPreview()) {
+          state.draftPreviewDirty = false;
+        } else if (state.draftPreviewInputSignature && draftInputSignature(state.draftInput) !== state.draftPreviewInputSignature) {
+          state.draftPreviewDirty = true;
+        }
         syncRuntimeAgendaRefs();
       } catch {
         draftAgenda = [];
+        state.draftPreviewDirty = false;
+        state.draftPreviewInputSignature = "";
       }
     }
 
@@ -6972,6 +7119,7 @@ Then produce:
         id: item.id || state.agenda[index]?.id
       }, t("segmentFallback", { number: index + 1 })));
       state.draftInput = nodes.agendaInput.value;
+      markDraftPreviewClean();
       syncRuntimeAgendaRefs();
       saveData();
       setLocalizedStatus(nodes.saveStatus, state.active ? "savedReturnToTimer" : "savedCount", { count: state.agenda.length });
@@ -7090,10 +7238,13 @@ Then produce:
       const parsed = parseAgendaText(nodes.agendaInput.value);
       if (!parsed.length) {
         setLocalizedStatus(nodes.parseStatus, "parseNone", {}, true);
+        updateDraftPreviewDirtyFromInput();
         saveData();
+        renderImportControls();
         return false;
       }
       draftAgenda = parsed;
+      markDraftPreviewClean();
       renderDraftTable();
       setLocalizedStatus(nodes.parseStatus, "parsedCount", { count: draftAgenda.length });
       if (options.advance) setImportStep(3, { persist: false });
@@ -7726,15 +7877,17 @@ Then produce:
     nodes.stepPills.forEach((pill) => {
       pill.addEventListener("click", () => {
         const step = Number(pill.dataset.stepPill);
-        if (step < state.importStep) setImportStep(step);
+        if (canEnterImportStep(step)) setImportStep(step);
       });
     });
     nodes.returnToTimer.addEventListener("click", () => switchView("timer", { autoStart: false }));
     nodes.agendaInput.addEventListener("keydown", insertAgendaTab);
     nodes.agendaInput.addEventListener("input", () => {
       state.draftInput = nodes.agendaInput.value;
+      updateDraftPreviewDirtyFromInput();
       updateAgendaTabSize();
       saveData();
+      renderImportControls();
     });
     nodes.agendaInput.addEventListener("blur", () => alignAgendaInputColumns());
     nodes.agendaInput.addEventListener("paste", () => setTimeout(() => alignAgendaInputColumns(), 0));
@@ -7769,9 +7922,12 @@ Then produce:
     nodes.clearDraft.addEventListener("click", () => {
       nodes.agendaInput.value = "";
       state.draftInput = "";
+      state.draftPreviewDirty = false;
+      state.draftPreviewInputSignature = "";
       alignAgendaInputColumns();
       draftAgenda = [];
       renderDraftTable();
+      setImportStep(defaultImportStep(), { persist: false });
       setStatus(nodes.parseStatus, "");
       setStatus(nodes.saveStatus, "");
       saveData();
@@ -7793,6 +7949,7 @@ Then produce:
         dingAfterSec: 30,
         childTemplates: []
       }, t("segmentFallback", { number: draftAgenda.length + 1 })));
+      markDraftPreviewClean();
       renderDraftTable();
       saveData();
     });
@@ -7800,7 +7957,9 @@ Then produce:
       const row = event.target.closest("tr");
       if (row) updateDraftRowAutoRules(row, event.target);
       syncDraftFromTable();
+      markDraftPreviewClean();
       saveData();
+      renderImportControls();
     });
     nodes.agendaTableBody.addEventListener("click", (event) => {
       if (!event.target.classList.contains("delete-row")) return;
@@ -7812,7 +7971,9 @@ Then produce:
       const index = [...nodes.agendaTableBody.children].indexOf(row);
       syncDraftFromTable();
       draftAgenda.splice(index, 1);
+      markDraftPreviewClean();
       renderDraftTable();
+      setImportStep(defaultImportStep(), { persist: false });
       saveData();
     });
     nodes.saveAgenda.addEventListener("click", () => {
@@ -7826,8 +7987,9 @@ Then produce:
     });
     nodes.settingsBtn.addEventListener("click", () => {
       draftAgenda = clone(state.agenda);
+      markDraftPreviewClean();
       renderDraftTable();
-      setImportStep(state.agenda.length ? 3 : 1, { persist: false });
+      setImportStep(defaultImportStep(), { persist: false });
       switchView("settings");
     });
     nodes.sideToggle.addEventListener("click", () => {
